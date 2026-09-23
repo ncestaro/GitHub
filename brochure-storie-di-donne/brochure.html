@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<title>Brochure – Storie di donne straordinariamente semplici</title>
+<link rel="stylesheet" href="assets/fonts.css">
+<style>
+/*
+  Pieghevole a 3 ante, piega a C (roll fold) – formato chiuso 99 x 210 mm
+  Foglio A4 orizzontale 297 x 210 mm + 3 mm di abbondanza per lato (303 x 216 mm)
+  Ante: 100 / 100 / 97 mm (l'anta che rientra è 3 mm più stretta)
+  Pagina 1 = ESTERNO: [anta interna 97] [retro 100] [copertina 100]
+  Pagina 2 = INTERNO: [col. 1 100] [col. 2 100] [col. 3 97]
+*/
+:root{
+  --cream:#F0DFCB;
+  --paper:#F4EDE3;
+  --burg:#92433E;
+  --terra:#C77B6D;
+  --char:#413E37;
+  --olive:#5A5337;
+  --bleed:3mm;
+}
+@page{ size:303mm 216mm; margin:0; }
+*{ box-sizing:border-box; margin:0; padding:0; }
+html,body{ background:#8d8a85; }
+body{ font-family:'Inter',sans-serif; color:var(--char); -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+
+.sheet{ width:303mm; height:216mm; position:relative; overflow:hidden; background:var(--cream); page-break-after:always; }
+.sheet:last-child{ page-break-after:auto; }
+.trim{ position:absolute; left:var(--bleed); top:var(--bleed); width:297mm; height:210mm; }
+.panel{ position:absolute; top:0; height:210mm; }
+.panel > .bg{ position:absolute; top:calc(-1 * var(--bleed)); bottom:calc(-1 * var(--bleed)); left:0; right:0; }
+.panel.bl > .bg{ left:calc(-1 * var(--bleed)); }
+.panel.br > .bg{ right:calc(-1 * var(--bleed)); }
+.w97{ width:97mm; } .w100{ width:100mm; }
+.content{ position:absolute; inset:0; padding:12mm 10mm; }
+
+/* segni di taglio e piega (solo in anteprima/stampa di prova) */
+.marks .fold{ position:absolute; top:calc(-1 * var(--bleed)); width:0; height:3mm; border-left:0.2mm dashed #999; }
+.marks .fold.b{ top:auto; bottom:calc(-1 * var(--bleed)); }
+
+/* tipografia comune */
+.script{ font-family:'Pinyon Script',cursive; color:var(--burg); font-weight:400; line-height:1; }
+.kicker{ font-size:6.6pt; letter-spacing:.22em; text-transform:uppercase; font-weight:600; color:var(--terra); }
+.kicker .n{ color:var(--burg); font-weight:800; margin-right:1.5mm; }
+p{ font-size:8.4pt; line-height:1.5; font-weight:400; }
+p + p{ margin-top:2.2mm; }
+.caps{ text-transform:uppercase; font-weight:800; letter-spacing:.01em; }
+.burg{ color:var(--burg); }
+.rule{ width:14mm; height:.5mm; background:var(--terra); border-radius:1mm; margin:4mm 0; }
+.ph{ } /* testo provvisorio: da sostituire */
+
+/* ================= ESTERNO ================= */
+
+/* Anta interna – Rosanna */
+.flap .bg{ background:var(--cream); }
+.flap .content{ padding:13mm 10mm 12mm 11mm; display:flex; flex-direction:column; }
+.flap .memoria{ text-align:center; }
+.flap .memoria .kicker{ display:block; }
+.flap .nome{ font-size:30pt; margin-top:2mm; }
+.flap .date{ font-size:7pt; letter-spacing:.2em; color:var(--char); margin-top:2mm; font-weight:500; }
+.photo{ position:relative; width:52mm; height:62mm; margin:7mm auto 6mm; }
+.photo .disc{ position:absolute; width:52mm; height:52mm; border-radius:50%; background:var(--terra); left:0; top:4mm; }
+.photo .frame{ position:absolute; left:7mm; top:0; width:38mm; height:62mm; border-radius:19mm 19mm 2mm 2mm; background:#d9c6b0; overflow:hidden;
+  box-shadow:0 1.4mm 3mm rgba(65,62,55,.28); border:1.2mm solid var(--paper); display:flex; align-items:center; justify-content:center; text-align:center; }
+.photo .frame span{ font-size:6.4pt; letter-spacing:.18em; text-transform:uppercase; color:#8a7b6a; font-weight:600; line-height:1.6; }
+.photo .frame svg{ position:absolute; bottom:-2mm; left:50%; transform:translateX(-50%); width:30mm; opacity:.35; }
+.flap .bio p{ font-size:8pt; text-align:left; }
+.quote{ font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:500; font-size:12pt; line-height:1.3; color:var(--burg);
+  margin-top:auto; padding-top:4mm; border-top:.3mm solid rgba(146,67,62,.3); text-align:center; }
+
+/* Retro – loghi */
+.back .bg{ background:var(--paper); }
+.back .content{ padding:12mm 9mm 10mm; display:flex; flex-direction:column; align-items:center; text-align:center; }
+.back .circolo{ width:52mm; }
+.back .intro{ font-size:7.6pt; margin-top:3mm; max-width:74mm; }
+.back h4{ font-size:6.4pt; letter-spacing:.24em; text-transform:uppercase; font-weight:600; color:var(--char); margin:7mm 0 3.2mm; display:flex; align-items:center; gap:2.5mm; width:100%; }
+.back h4::before,.back h4::after{ content:""; flex:1; height:.25mm; background:rgba(65,62,55,.25); }
+.logos{ display:grid; gap:4mm 3mm; width:100%; align-items:center; justify-items:center; }
+.logos.partner{ grid-template-columns:repeat(3,1fr); }
+.logos.partner img{ height:15mm; max-width:100%; object-fit:contain; }
+.logos.partner img.wide{ height:10.5mm; }
+.logos.patrocinio{ grid-template-columns:1fr .5fr 1fr .5fr; }
+.logos.patrocinio img{ height:11mm; max-width:100%; object-fit:contain; }
+.back .info{ margin-top:auto; width:100%; background:var(--burg); color:#fff; border-radius:2mm; padding:4mm; display:flex; gap:4mm; align-items:center; text-align:left; }
+.back .info img{ width:19mm; height:19mm; border-radius:1mm; }
+.back .info b{ display:block; font-size:8pt; font-weight:800; letter-spacing:.02em; margin-bottom:1mm; }
+.back .info span{ display:block; font-size:7.8pt; line-height:1.45; font-weight:400; }
+
+/* Copertina */
+.front .bg{ background:var(--cream); }
+.front .donna{ position:absolute; right:calc(-1 * var(--bleed)); bottom:25mm; height:106mm; transform:scaleX(-1); }
+.front .top{ position:absolute; left:0; right:0; top:11mm; text-align:center; }
+.front .top img{ width:44mm; }
+.front .top .pres{ font-size:7pt; letter-spacing:.06em; margin-top:2.5mm; line-height:1.45; }
+.front .title{ position:absolute; left:7mm; right:5mm; top:37mm; font-size:25pt; line-height:.98; }
+.front .title .l1{ display:block; }
+.front .title .l2{ display:block; padding-left:0; margin-top:1mm; }
+.front .title .l3{ display:block; padding-left:30mm; margin-top:1mm; }
+.front .cura{ position:absolute; left:9mm; top:82mm; width:44mm; font-size:7.2pt; line-height:1.35; }
+.front .cura b{ color:var(--burg); font-weight:800; }
+.front .when{ position:absolute; left:9mm; top:102mm; width:46mm; }
+.front .when .d{ font-size:17pt; font-weight:800; line-height:1.02; letter-spacing:-.01em; }
+.front .when .d small{ display:block; font-size:12.5pt; }
+.front .when .t{ margin-top:3.5mm; font-size:8.6pt; font-weight:800; color:var(--burg); text-transform:uppercase; }
+.front .when .l{ font-size:7.6pt; line-height:1.4; }
+.front .when .m{ margin-top:3.5mm; width:39mm; font-size:7.4pt; line-height:1.4; }
+.front .when .m b{ color:var(--burg); font-weight:800; }
+.front .band{ position:absolute; left:0; right:calc(-1 * var(--bleed)); bottom:calc(-1 * var(--bleed)); height:calc(29mm + var(--bleed)); }
+.front .band svg{ position:absolute; inset:0; width:100%; height:100%; }
+.front .band .txt{ position:absolute; left:9mm; right:calc(7mm + var(--bleed)); bottom:calc(6mm + var(--bleed)); color:#fff; }
+.front .band .txt small{ display:block; font-size:7pt; font-weight:300; }
+.front .band .txt b{ display:block; font-size:8.2pt; font-weight:700; line-height:1.3; margin-top:.6mm; }
+
+/* ================= INTERNO ================= */
+.inside .bg{ background:var(--cream); }
+.col .content{ padding:12mm 9.5mm 30mm; display:flex; flex-direction:column; }
+.col h2{ font-size:25pt; margin-top:3mm; }
+.col .sub{ min-height:6.6mm; font-size:7.4pt; font-weight:600; letter-spacing:.04em; margin-top:1.5mm; text-transform:uppercase; color:var(--char); }
+.arch{ width:100%; height:60mm; border-radius:40mm 40mm 2mm 2mm; overflow:hidden; margin:5mm 0 5mm; position:relative; box-shadow:0 1mm 2.5mm rgba(65,62,55,.18); }
+.arch img{ width:100%; height:100%; object-fit:cover; display:block; }
+.col .lead{ font-size:9pt; font-weight:600; line-height:1.45; color:var(--burg); margin-bottom:2.2mm; }
+.donation{ margin-top:4mm; border:.35mm solid var(--burg); border-radius:2mm; padding:3.2mm 4mm; display:flex; align-items:center; gap:3.5mm; }
+.donation .eur{ font-size:24pt; font-weight:800; color:var(--burg); line-height:1; }
+.donation .eur sup{ font-size:11pt; }
+.donation p{ font-size:7.6pt; line-height:1.4; }
+.credits{ margin-top:4mm; font-size:7.6pt; line-height:1.55; }
+.credits dt{ font-weight:700; color:var(--burg); text-transform:uppercase; font-size:6.6pt; letter-spacing:.12em; }
+.credits dd{ margin-bottom:1.6mm; }
+.programma{ list-style:none; margin-top:4mm; font-size:7.8pt; line-height:1.4; }
+.programma li{ display:flex; gap:2.5mm; padding:1.3mm 0; border-bottom:.25mm dotted rgba(65,62,55,.35); }
+.programma li b{ color:var(--burg); font-weight:700; min-width:4mm; }
+
+/* fascia bordeaux che corre sotto le tre colonne */
+.inside .wave{ position:absolute; left:0; right:0; bottom:0; height:30mm; }
+.inside .wave svg{ position:absolute; inset:0; width:100%; height:100%; }
+.inside .wave .cells{ position:absolute; left:var(--bleed); width:297mm; bottom:calc(var(--bleed) + 6.5mm); display:flex; color:#fff; }
+.inside .wave .cells > div{ padding:0 9.5mm; }
+.inside .wave .c1{ width:100mm; } .inside .wave .c2{ width:100mm; } .inside .wave .c3{ width:97mm; }
+.inside .wave small{ display:block; font-size:6.4pt; letter-spacing:.2em; text-transform:uppercase; font-weight:500; opacity:.85; }
+.inside .wave b{ display:block; font-size:9.4pt; font-weight:800; line-height:1.25; margin-top:.8mm; }
+.inside .wave span{ display:block; font-size:7.4pt; line-height:1.35; }
+
+/* anteprima a schermo */
+@media screen{
+  body{ padding:10mm; display:flex; flex-direction:column; align-items:center; gap:10mm; }
+  .sheet{ box-shadow:0 2mm 8mm rgba(0,0,0,.35); }
+}
+</style>
+</head>
+<body>
+
+<!-- ============ PAGINA 1 – ESTERNO ============ -->
+<section class="sheet">
+  <div class="trim">
+
+    <!-- ANTA INTERNA (rientra) – Rosanna Bove Ferrigno -->
+    <div class="panel flap w97 bl" style="left:0">
+      <div class="bg"></div>
+      <div class="content">
+        <div class="memoria">
+          <span class="kicker">In ricordo della Presidente</span>
+          <div class="script nome">Rosanna Bove Ferrigno</div>
+          <div class="date ph">19XX – 2026</div>
+        </div>
+
+        <div class="photo">
+          <div class="disc"></div>
+          <div class="frame">
+            <span style="position:absolute;top:12mm;left:0;right:0">Foto di<br>Rosanna</span>
+            <svg viewBox="0 0 100 110"><circle cx="50" cy="36" r="22" fill="#8a7b6a"/><path d="M5 110c0-30 20-48 45-48s45 18 45 48z" fill="#8a7b6a"/></svg>
+          </div>
+        </div>
+
+        <div class="bio">
+          <p><span class="ph">Presidente del Circolo Carlo Alberto 1886 di Padula, Rosanna Bove Ferrigno ha dedicato la sua vita alla cultura, alla solidarietà e alla comunità del Vallo di Diano.</span></p>
+          <p><span class="ph">Donna di grande sensibilità e determinazione, ha promosso incontri, rassegne e iniziative a sostegno dei più fragili. Questo spettacolo è l'ultimo progetto che ha fortemente voluto: oggi il Circolo lo porta in scena nel suo nome, perché la sua visione continui a vivere.</span></p>
+        </div>
+
+        <div class="quote ph">“Le storie delle donne semplici sono, spesso, le più straordinarie.”</div>
+      </div>
+    </div>
+
+    <!-- RETRO – loghi -->
+    <div class="panel back w100" style="left:97mm">
+      <div class="bg"></div>
+      <div class="content">
+        <img class="circolo" src="assets/logo_circolo.png" alt="Circolo Carlo Alberto 1886 – Padula">
+        <p class="intro"><span class="ph">Un sodalizio umano e culturale nato oltre un secolo fa, che da sempre unisce la comunità di Padula nel segno della cultura e della solidarietà.</span></p>
+
+        <h4>Partner dell'iniziativa</h4>
+        <div class="logos partner">
+          <img src="assets/loghi/provincia-salerno.png" alt="">
+          <img src="assets/loghi/comune-1.png" alt="">
+          <img src="assets/loghi/comune-2.png" alt="">
+          <img src="assets/loghi/parco-cilento.png" alt="">
+          <img src="assets/loghi/sistema-cilento.png" alt="">
+          <img class="wide" src="assets/loghi/asl-salerno.png" alt="">
+          <img class="wide" src="assets/loghi/banca-monte-pruno.png" alt="">
+          <img class="wide" src="assets/loghi/tubifor.png" alt="">
+          <img class="wide" src="assets/loghi/compagnia-eduardo.png" alt="">
+        </div>
+
+        <h4>Con il patrocinio morale di</h4>
+        <div class="logos patrocinio">
+          <img src="assets/loghi/ordine-avvocati.png" alt="">
+          <img src="assets/loghi/mano.png" alt="">
+          <img src="assets/loghi/lions.png" alt="">
+          <img src="assets/loghi/se-non-ora.png" alt="">
+        </div>
+
+        <div class="info">
+          <img src="assets/qr.jpg" alt="QR code">
+          <div>
+            <b>INFO E PRENOTAZIONI</b>
+            <span>Giuseppina 333 163 2336</span>
+            <span>Filomena 320 707 2734</span>
+            <span>Tiziana 388 127 5915</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COPERTINA -->
+    <div class="panel front w100 br" style="left:197mm">
+      <div class="bg"></div>
+      <img class="donna" src="assets/donna.jpg" alt="">
+      <div class="band">
+        <svg viewBox="0 0 106 32" preserveAspectRatio="none"><path d="M0 12 C 30 0, 70 0, 106 6 L106 32 L0 32 Z" fill="#92433E"/></svg>
+        <div class="txt">
+          <small>Ingresso con donazione da 10 €</small>
+          <b>L'intero ricavato sarà devoluto al Reparto di Oncologia dell'Ospedale “L. Curto” di Polla.</b>
+        </div>
+      </div>
+      <div class="top">
+        <img src="assets/logo_circolo.png" alt="Circolo Carlo Alberto 1886">
+        <div class="pres">presenta lo spettacolo</div>
+      </div>
+      <h1 class="script title">
+        <span class="l1">Storie di donne</span>
+        <span class="l2">straordinariamente</span>
+        <span class="l3">semplici</span>
+      </h1>
+      <div class="cura">a cura della<br><b>COMPAGNIA TEATRALE<br>EDUARDO</b></div>
+      <div class="when">
+        <div class="d">10 OTTOBRE<br>2026<small>ORE 19:30</small></div>
+        <div class="t">Teatro Scarpetta</div>
+        <div class="l">Polo culturale Cappuccini<br>Sala Consilina (SA)</div>
+        <div class="m">Con la partecipazione straordinaria del Maestro <b style="white-space:nowrap">ALDO D'ANGIÒ</b></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ PAGINA 2 – INTERNO ============ -->
+<section class="sheet inside">
+  <div class="trim">
+
+    <!-- COLONNA 1 – Beneficenza -->
+    <div class="panel col w100 bl" style="left:0">
+      <div class="bg"></div>
+      <div class="content">
+        <span class="kicker"><span class="n">01</span>La beneficenza</span>
+        <h2 class="script">Un gesto che cura</h2>
+        <div class="sub">a sostegno del Reparto di Oncologia di Polla</div>
+        <div class="arch"><img src="assets/ill_beneficenza.png" alt=""></div>
+        <p class="lead">L'intero ricavato della serata sarà devoluto al Reparto di Oncologia dell'Ospedale “L. Curto” di Polla.</p>
+        <p><span class="ph">Ogni donazione contribuirà all'acquisto di attrezzature e al miglioramento dell'accoglienza di pazienti e familiari, sostenendo il lavoro quotidiano di medici, infermieri e volontari del territorio.</span></p>
+        <div class="donation">
+          <div class="eur">10<sup>€</sup></div>
+          <p>Ingresso con <b>donazione minima</b>.<br><span class="ph">È possibile contribuire anche con un'offerta libera.</span></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- COLONNA 2 – Spettacolo teatrale -->
+    <div class="panel col w100" style="left:100mm">
+      <div class="bg"></div>
+      <div class="content">
+        <span class="kicker"><span class="n">02</span>Lo spettacolo teatrale</span>
+        <h2 class="script">In scena</h2>
+        <div class="sub">a cura della Compagnia Teatrale Eduardo</div>
+        <div class="arch"><img src="assets/ill_teatro.png" alt=""></div>
+        <p class="lead">Storie di donne straordinariamente semplici</p>
+        <p><span class="ph">Madri, figlie, lavoratrici, sognatrici: voci che attraversano il tempo e raccontano la forza silenziosa di chi, ogni giorno, rende straordinario ciò che è semplice. Un intreccio di monologhi e quadri scenici tra ironia e commozione.</span></p>
+        <dl class="credits">
+          <dt>Regia</dt><dd><span class="ph">Nome Cognome</span></dd>
+          <dt>Con</dt><dd><span class="ph">Nome Cognome, Nome Cognome, Nome Cognome, Nome Cognome, Nome Cognome</span></dd>
+        </dl>
+      </div>
+    </div>
+
+    <!-- COLONNA 3 – Spettacolo musicale -->
+    <div class="panel col w97 br" style="left:200mm">
+      <div class="bg"></div>
+      <div class="content">
+        <span class="kicker"><span class="n">03</span>Lo spettacolo musicale</span>
+        <h2 class="script">In musica</h2>
+        <div class="sub">con la partecipazione straordinaria del Maestro Aldo D'Angiò</div>
+        <div class="arch"><img src="assets/ill_musica.png" alt="" style="object-position:50% 80%"></div>
+        <p><span class="ph">Musicista e interprete di lunga esperienza, il Maestro Aldo D'Angiò accompagnerà le storie della serata con un percorso musicale che dialoga con la scena, tra melodie classiche e grandi pagine della canzone d'autore.</span></p>
+        <ul class="programma">
+          <li><b>I</b><span class="ph">Titolo brano – Autore</span></li>
+          <li><b>II</b><span class="ph">Titolo brano – Autore</span></li>
+          <li><b>III</b><span class="ph">Titolo brano – Autore</span></li>
+          <li><b>IV</b><span class="ph">Titolo brano – Autore</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="wave" style="left:calc(-1 * var(--bleed)); right:calc(-1 * var(--bleed)); bottom:calc(-1 * var(--bleed)); height:calc(27mm + var(--bleed)); position:absolute;">
+      <svg viewBox="0 0 303 30" preserveAspectRatio="none"><path d="M0 9 C 70 -1, 150 14, 210 6 S 290 0, 303 5 L303 30 L0 30 Z" fill="#92433E"/></svg>
+      <div class="cells">
+        <div class="c1"><small>Quando</small><b>Sabato 10 ottobre 2026</b><span>ore 19:30</span></div>
+        <div class="c2"><small>Dove</small><b>Teatro Scarpetta</b><span>Polo culturale Cappuccini · Sala Consilina (SA)</span></div>
+        <div class="c3"><small>Info e prenotazioni</small><span>Giuseppina 333 163 2336<br>Filomena 320 707 2734 · Tiziana 388 127 5915</span></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+</body>
+</html>
