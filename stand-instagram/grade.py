@@ -1,7 +1,7 @@
 import cv2, numpy as np, glob, os, sys
 os.makedirs('work/graded',exist_ok=True)
 TA,TB=0.3,2.0          # neutral target (slightly warm)
-TMED=55.0              # target median L
+TMED=52.0              # target median L
 def s2l(x): return np.where(x<=0.04045,x/12.92,((x+0.055)/1.055)**2.4)
 def l2s(x): x=np.clip(x,0,1); return np.where(x<=0.0031308,x*12.92,1.055*x**(1/2.4)-0.055)
 def lab(bgr): return cv2.cvtColor(bgr.astype(np.float32),cv2.COLOR_BGR2LAB)
@@ -23,16 +23,16 @@ def grade(f, exp_bias=0.0):
     Lab=lab(s); L=Lab[...,0]/100
     lo,hi=np.percentile(L,0.5),np.percentile(L,99.7)
     x=np.clip((L-lo)/(hi-lo),0,1)
-    sc=x + 0.35*x*(1-x)*(x-0.5)            # gentle S
-    y=0.025+0.955*np.clip(sc,0,1)             # matte blacks, soft whites
+    sc=x + 0.55*(x*x*(3-2*x)-x)            # S-curve, punchier contrast
+    y=0.005+0.99*np.clip(sc,0,1)              # deep blacks, clean whites
     # 4) clarity: local contrast on L (large radius)
     blur=cv2.GaussianBlur(y.astype(np.float32),(0,0),25)
-    y=np.clip(y+0.18*(y-blur)*(1-np.abs(y-0.5)*1.4).clip(0,1),0,1)
+    y=np.clip(y+0.25*(y-blur)*(1-np.abs(y-0.5)*1.4).clip(0,1),0,1)
     Lab[...,0]=y*100
     # 5) chroma: global -10%, magenta/pink (LED screens) -35%, greens slightly toward natural
     a,b=Lab[...,1],Lab[...,2]; C=np.hypot(a,b); h=np.degrees(np.arctan2(b,a))%360
-    f_=np.full_like(C,0.90)
-    mag=np.exp(-((((h-340+180)%360)-180)/30)**2); f_*=1-0.35*mag
+    f_=np.full_like(C,1.08)
+    mag=np.exp(-((((h-340+180)%360)-180)/30)**2); f_*=1-0.20*mag
     grn=np.exp(-((((h-140+180)%360)-180)/35)**2); f_*=1-0.05*grn
     Lab[...,1]=a*f_; Lab[...,2]=b*f_
     out=cv2.cvtColor(Lab,cv2.COLOR_LAB2BGR)
