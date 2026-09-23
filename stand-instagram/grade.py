@@ -39,10 +39,11 @@ def grade(f, exp_bias=0.0):
     # 6) output sharpening
     bl=cv2.GaussianBlur(out,(0,0),1.0); out=np.clip(out+0.35*(out-bl),0,1)
     return (out*255+0.5).astype(np.uint8)
-bias={'0589':0,'0607':3,'0605':3}
-for f in sorted(glob.glob('work/crop/*.png')):
-    n=f.split('_')[-1][:4]
-    out=grade(f,bias.get(n,0))
-    cv2.imwrite('work/graded/'+os.path.basename(f)[:-4]+'.jpg',out,[cv2.IMWRITE_JPEG_QUALITY,95])
-    L=lab(out.astype(np.float32)/255); C=np.hypot(L[...,1],L[...,2]); m=(C<14)&(L[...,0]>25)&(L[...,0]<90)
-    print(os.path.basename(f), f'Lmed={np.median(L[...,0]):.1f} a={np.median(L[...,1][m]):+.2f} b={np.median(L[...,2][m]):+.2f}')
+if __name__=='__main__':
+  bias={'0589':0,'0607':3,'0605':3}
+  for f in sorted(glob.glob('work/crop/*.png')):
+      n=f.split('_')[-1][:4]
+      out=grade(f,bias.get(n,0))
+      cv2.imwrite('work/graded/'+os.path.basename(f)[:-4]+'.jpg',out,[cv2.IMWRITE_JPEG_QUALITY,95])
+      L=lab(out.astype(np.float32)/255); C=np.hypot(L[...,1],L[...,2]); m=(C<14)&(L[...,0]>25)&(L[...,0]<90)
+      print(os.path.basename(f), f'Lmed={np.median(L[...,0]):.1f} a={np.median(L[...,1][m]):+.2f} b={np.median(L[...,2][m]):+.2f}')
