@@ -35,7 +35,7 @@ with sync_playwright() as p:
         pg.goto((here / "counter.html").resolve().as_uri() + f"?f={f}&totale={args.totale}")
         T = pg.evaluate("window.ready")
         if args.stills:
-            for t in (1.2, 2.6, 6.0, 9.0, T["dur"]):
+            for t in (2.0, 4.2, 5.0, 5.7, 9.0, T["dur"]):
                 pg.evaluate(f"renderAt({t})")
                 pg.screenshot(path=str(out / f"anteprima_{name}_{t:04.1f}s.png"))
             continue

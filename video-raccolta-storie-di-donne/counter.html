@@ -38,7 +38,10 @@ body{ font-family:'Inter',sans-serif; color:var(--char); }
 .col{ position:absolute; left:0; right:0; display:flex; flex-direction:column; align-items:center; text-align:center; }
 .logo{ display:block; }
 .script{ font-family:'Pinyon Script',cursive; color:var(--burg); line-height:1.05; white-space:nowrap; }
-.sub{ font-weight:600; letter-spacing:.2em; text-transform:uppercase; color:var(--char); }
+.sub{ font-weight:600; letter-spacing:.2em; text-transform:uppercase; color:var(--char); white-space:nowrap; }
+.sub .dots{ letter-spacing:.06em; margin-right:-.2em; }
+.sub .dots i{ font-style:normal; }
+.msg{ display:flex; flex-direction:column; align-items:center; transform-origin:50% 50%; }
 
 .amount{ font-weight:800; color:var(--burg); line-height:1; white-space:nowrap; letter-spacing:-.02em;
   font-feature-settings:'tnum' 1, 'lnum' 1; display:flex; align-items:baseline; justify-content:center; }
@@ -47,15 +50,9 @@ body{ font-family:'Inter',sans-serif; color:var(--char); }
 .bar{ position:relative; height:var(--barH); border-radius:999px; background:rgba(199,123,109,.28); overflow:hidden; }
 .bar i{ position:absolute; left:0; top:0; bottom:0; border-radius:999px; background:var(--burg); }
 
-.dedica{ display:flex; align-items:center; gap:.4em; }
-.dedica .k{ font-size:var(--kS); letter-spacing:.22em; text-transform:uppercase; font-weight:600; color:var(--terra); }
-.dedica .n{ font-family:'Pinyon Script',cursive; color:var(--burg); font-size:var(--nS); line-height:1.1; white-space:nowrap; }
 
 .band{ position:absolute; left:0; right:0; bottom:0; }
 .band svg{ position:absolute; inset:0; width:100%; height:100%; }
-.band .txt{ position:absolute; left:0; right:0; color:#fff; text-align:center; }
-.band small{ display:block; font-weight:500; letter-spacing:.2em; text-transform:uppercase; opacity:.85; }
-.band b{ display:block; font-weight:700; line-height:1.3; }
 
 /* ---------- VERTICALE 1080 x 1920 ---------- */
 .v{ --W:1080px; --H:1920px; --barH:16px; }
@@ -67,27 +64,19 @@ body{ font-family:'Inter',sans-serif; color:var(--char); }
 .v .sub{ font-size:36px; margin-top:34px; }
 .v .amount{ margin-top:80px; }
 .v .bar{ width:760px; margin-top:60px; }
-.v .dedica{ flex-direction:column; gap:14px; margin-top:110px; --kS:24px; --nS:84px; }
-.v .band{ height:390px; }
-.v .band .txt{ bottom:96px; padding:0 90px; }
-.v .band small{ font-size:25px; }
-.v .band b{ font-size:38px; margin-top:16px; }
+.v .band{ height:200px; }
 
-/* ---------- ORIZZONTALE 1920 x 1080 ---------- */
-.h{ --W:1920px; --H:1080px; --barH:12px; }
-.h .disc.a{ width:760px; height:760px; left:-430px; top:-300px; }
-.h .disc.b{ width:1500px; height:1500px; left:210px; top:200px; }
-.h .col{ top:54px; }
-.h .logo{ width:360px; }
-.h .script{ font-size:96px; margin-top:22px; }
-.h .sub{ font-size:25px; margin-top:12px; }
-.h .amount{ margin-top:14px; }
-.h .bar{ width:900px; margin-top:22px; }
-.h .dedica{ gap:22px; margin-top:20px; --kS:18px; --nS:54px; }
-.h .band{ height:230px; }
-.h .band .txt{ bottom:48px; padding:0 200px; }
-.h .band small{ font-size:19px; }
-.h .band b{ font-size:30px; margin-top:10px; }
+/* ---------- ORIZZONTALE 1920 x 1080 (schermo del teatro: scritte grandi) ---------- */
+.h{ --W:1920px; --H:1080px; --barH:16px; }
+.h .disc.a{ width:640px; height:640px; left:-400px; top:-300px; }
+.h .disc.b{ width:1700px; height:1700px; left:110px; top:150px; }
+.h .col{ top:36px; }
+.h .logo{ width:470px; }
+.h .script{ font-size:140px; margin-top:0; }
+.h .sub{ font-size:44px; margin-top:30px; letter-spacing:.16em; }
+.h .amount{ margin-top:4px; }
+.h .bar{ width:1300px; margin-top:20px; }
+.h .band{ height:110px; }
 </style>
 </head>
 <body>
@@ -97,19 +86,16 @@ body{ font-family:'Inter',sans-serif; color:var(--char); }
 
   <div class="col">
     <img class="logo" src="assets/logo_circolo.png" alt="Circolo Carlo Alberto 1886 – Padula">
-    <div class="script" id="grazie">Grazie a tutti voi</div>
-    <div class="sub" id="sub">siamo riusciti a raccogliere</div>
+    <div class="msg" id="msg">
+      <div class="script" id="grazie">Grazie a tutti voi</div>
+      <div class="sub" id="sub">siamo riusciti a raccogliere<span class="dots"><i>.</i><i>.</i><i>.</i></span></div>
+    </div>
     <div class="amount" id="amount"><span class="eur">€</span><span id="num">9.320</span></div>
     <div class="bar" id="bar"><i id="fill"></i></div>
-    <div class="dedica" id="dedica"><span class="k">In ricordo della Presidente</span><span class="n">Rosanna Bove Ferrigno</span></div>
   </div>
 
   <div class="band" id="band">
     <svg viewBox="0 0 106 32" preserveAspectRatio="none"><path d="M0 12 C 30 0, 70 0, 106 6 L106 32 L0 32 Z" fill="#92433E"/></svg>
-    <div class="txt">
-      <small>Storie di donne straordinariamente semplici</small>
-      <b>Interamente devoluti al Reparto di Oncologia<br>dell'Ospedale “L. Curto” di Polla</b>
-    </div>
   </div>
 </div>
 
@@ -122,14 +108,17 @@ document.documentElement.className = FMT;
 // tempi (secondi)
 const T = {
   dur: 15,
-  countStart: 2.4,
-  countEnd: 11.2,
+  shrink: [4.5, 5.6],     // il testo grande al centro si riduce e sale al suo posto
+  countStart: 6.0,
+  countEnd: 13.0,
 };
+const INTRO_SCALE = 1.5;  // ingrandimento del testo nell'apertura
 
 const fmt = n => n.toLocaleString('it-IT');   // 9.320
 const clamp = x => Math.min(1, Math.max(0, x));
 const seg = (t, a, b) => clamp((t - a) / (b - a));
 const easeOut = x => 1 - Math.pow(1 - x, 3);
+const easeInOut = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
 
 // cubic-bezier(x1,y1,x2,y2): parte piano, accelera, poi rallenta a lungo sul finale
 function bezier(x1, y1, x2, y2) {
@@ -148,20 +137,23 @@ const countEase = bezier(0.42, 0, 0.12, 1);
 const $ = id => document.getElementById(id);
 const els = {
   logo: document.querySelector('.logo'),
-  grazie: $('grazie'), sub: $('sub'), amount: $('amount'), num: $('num'),
-  bar: $('bar'), dedica: $('dedica'), fill: $('fill'), band: $('band'),
+  msg: $('msg'), grazie: $('grazie'), sub: $('sub'), dots: [...document.querySelectorAll('.dots i')], amount: $('amount'), num: $('num'),
+  bar: $('bar'), fill: $('fill'), band: $('band'),
   discA: document.querySelector('.disc.a'), discB: document.querySelector('.disc.b'),
 };
 
 // adatta la cifra finale alla larghezza dello schermo
 function fit() {
   els.num.textContent = fmt(TOTAL);
-  const target = (FMT === 'v' ? 0.92 : 0.66) * window.innerWidth;
+  const target = (FMT === 'v' ? 0.92 : 0.82) * window.innerWidth;
   let size = 100;
   els.amount.style.fontSize = size + 'px';
   size = size * target / els.amount.getBoundingClientRect().width;
-  if (FMT === 'h') size = Math.min(size, 280);
+  if (FMT === 'h') size = Math.min(size, 410);
   els.amount.style.fontSize = size.toFixed(1) + 'px';
+  // spostamento che porta il testo al centro dello schermo
+  const r = els.msg.getBoundingClientRect();
+  els.msgDy = window.innerHeight / 2 - (r.top + r.height / 2);
 }
 
 function fadeUp(el, p, dist) {
@@ -187,17 +179,24 @@ window.renderAt = function (t) {
 
   fadeUp(els.logo, seg(t, 0.4, 1.4), 40 * k);
 
+  // apertura: testo grande al centro, poi si riduce e sale
+  const sh = easeInOut(seg(t, T.shrink[0], T.shrink[1]));
+  const sc = INTRO_SCALE + (1 - INTRO_SCALE) * sh;
+  els.msg.style.transform = `translateY(${(1 - sh) * els.msgDy}px) scale(${sc})`;
+
   // "Grazie a tutti voi": rivelato da sinistra come una scrittura a mano
-  const g = seg(t, 0.9, 2.3);
+  const g = seg(t, 0.8, 2.4);
   const ge = 1 - Math.pow(1 - g, 2);
-  els.grazie.style.clipPath = `inset(-20% ${(1 - ge) * 100}% -20% 0)`;
+  els.grazie.style.clipPath = `inset(-30% ${(1 - ge) * 100}% -30% -5%)`;
   els.grazie.style.opacity = g > 0 ? 1 : 0;
 
-  fadeUp(els.sub, seg(t, 1.6, 2.5), 24 * k);
+  fadeUp(els.sub, seg(t, 2.2, 3.0), 24 * k);
+  // i puntini compaiono uno alla volta
+  els.dots.forEach((el, i) => { el.style.opacity = easeOut(seg(t, 3.1 + i * 0.35, 3.35 + i * 0.35)); });
 
   // contatore
-  fadeUp(els.amount, seg(t, 1.9, 2.6), 30 * k);
-  els.bar.style.opacity = easeOut(seg(t, 2.1, 2.7));
+  fadeUp(els.amount, seg(t, T.shrink[1] - 0.3, T.shrink[1] + 0.4), 30 * k);
+  els.bar.style.opacity = easeOut(seg(t, T.shrink[1] - 0.1, T.shrink[1] + 0.5));
   const p = countEase(seg(t, T.countStart, T.countEnd));
   const val = Math.round(TOTAL * p);
   els.num.textContent = fmt(val);
@@ -207,9 +206,6 @@ window.renderAt = function (t) {
   const a = seg(t, T.countEnd, T.countEnd + 0.9);
   const pulse = a > 0 && a < 1 ? Math.sin(a * Math.PI) * 0.06 : 0;
   els.amount.style.transform += ` scale(${1 + pulse})`;
-
-  // dedica finale
-  fadeUp(els.dedica, seg(t, T.countEnd + 0.6, T.countEnd + 2.0), 26 * k);
 };
 
 window.ready = document.fonts.ready.then(() => {
