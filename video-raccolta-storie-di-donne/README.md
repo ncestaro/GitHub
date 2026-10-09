@@ -1,18 +1,33 @@
-# Contatore raccolta fondi – "Storie di donne straordinariamente semplici"
+# Raccolta fondi – "Storie di donne straordinariamente semplici"
 
-Video 16:9 per lo schermo del teatro (1920 × 1080, 30 fps, 15 s, senza audio) con la grafica della
-locandina/brochure e scritte grandi.
+Materiali per lo schermo del teatro (16:9, 1920 × 1080, 30 fps, senza audio) con la grafica di
+locandina e brochure.
 
-- `export/raccolta_9320_orizzontale_1920x1080.mp4` – il video
-- `export/finale_orizzontale_1920x1080.png` – ultimo fotogramma (immagine fissa)
+## Sequenza con la poltrona (`sequenza.html`, `render_sequenza.py`)
 
-Sequenza:
-- 0–4,5 s: logo in alto; al centro, in grande, "Grazie a tutti voi" (scritto da sinistra) e
-  "siamo riusciti a raccogliere" con i tre puntini che compaiono uno alla volta
-- 4,5–5,6 s: la scritta si riduce e sale al suo posto, compare € 0
-- 6–13 s: la cifra sale fino a € 9.320 (parte piano, accelera, rallenta sul finale) con la barra
-- 13 s: "battito" della cifra all'arrivo, poi fermo fino a 15 s
+| file | cosa | durata |
+|---|---|---|
+| `export/1_poltrona.mp4` | la poltrona si reclina (video Higgsfield invertito, scontornato) sullo sfondo dell'evento | 10 s |
+| `export/2_fermo_poltrona.png` | fermo immagine: ultimo fotogramma di 1 | – |
+| `export/3_contatore.mp4` | la poltrona sparisce, "Grazie a tutti voi – siamo riusciti a raccogliere…", contatore da € 0 a € 9.320; sulla barra compare una poltroncina ogni 1/8 dell'importo (≈ 1.165 €); a fine conteggio fuochi d'artificio sobri | 17 s |
+| `export/4_fermo_importo.png` | fermo immagine: ultimo fotogramma di 3 | – |
+| `export/5_poltrone.mp4` | la cifra si riduce e sale, compaiono le 8 poltrone grandi | 7 s |
+| `export/sequenza_completa.mp4` | le cinque parti di fila (fermi da 3 s), per anteprima | – |
 
-Per rigenerare (anche con un altro importo):
-`pip install playwright && python3 render.py --totale 9320` (richiede ffmpeg).
-`--formati vh` esporta anche una versione verticale 1080 × 1920.
+Ogni parte inizia esattamente dove finisce la precedente, quindi si possono montare o lanciare una dopo l'altra.
+
+Per rigenerare:
+
+```
+pip install playwright rembg[cpu] scipy        # richiede anche ffmpeg
+python3 tools/scontorna_fotogrammi.py <fotogrammi> <maschere>          # ~8 s a fotogramma su CPU
+python3 tools/prepara_video_poltrona.py <video.mp4> <maschere> build/sedia
+python3 tools/prepara_poltrona.py <foto_poltrona.jpg>                  # assets/poltrona*.png
+python3 render_sequenza.py --totale 9320
+```
+
+Le maschere già calcolate per il video sono in `assets/sedia_maschere/`.
+
+## Solo contatore (`counter.html`, `render.py`)
+
+Versione precedente senza poltrone: `export/raccolta_9320_orizzontale_1920x1080.mp4` (15 s).

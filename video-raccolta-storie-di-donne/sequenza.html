@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<title>Raccolta fondi – sequenza</title>
+<style>
+/*
+  Sequenza per lo schermo del teatro (1920x1080), grafica di "Storie di donne straordinariamente semplici".
+  ?parte=1  la poltrona si reclina (video invertito, scontornato) sullo sfondo dell'evento
+  ?parte=3  la poltrona sparisce, ringraziamento, contatore con 8 poltroncine sulla barra, fuochi d'artificio
+  ?parte=5  la cifra si riduce e compaiono le 8 poltrone grandi
+  Le parti 2 e 4 sono i fermi immagine dell'ultimo fotogramma di 1 e 3.
+  Il tempo è pilotato da window.renderAt(secondi) (asincrona: aspetta il fotogramma della poltrona).
+*/
+@font-face{ font-family:'Inter'; font-weight:600; src:url(assets/fonts/Inter-600.woff2) format('woff2'); }
+@font-face{ font-family:'Inter'; font-weight:800; src:url(assets/fonts/Inter-800.woff2) format('woff2'); }
+@font-face{ font-family:'Pinyon Script'; font-weight:400; src:url(assets/fonts/PinyonScript-400.woff2) format('woff2'); }
+
+:root{
+  --cream:#F0DFCB;
+  --burg:#92433E;
+  --terra:#C77B6D;
+  --char:#413E37;
+}
+*{ box-sizing:border-box; margin:0; padding:0; }
+html,body{ width:1920px; height:1080px; overflow:hidden; background:var(--cream); }
+body{ font-family:'Inter',sans-serif; color:var(--char); }
+.stage{ position:absolute; inset:0; overflow:hidden; background:var(--cream); }
+
+.disc{ position:absolute; border-radius:50%; }
+.disc.a{ background:var(--terra); width:640px; height:640px; left:-400px; top:-300px; }
+.disc.b{ background:#E9D2BA; width:1700px; height:1700px; left:110px; top:150px; }
+
+#fx{ position:absolute; inset:0; }
+
+/* poltrona del video */
+.chair{ position:absolute; left:0; top:0; transform-origin:50% 100%; }
+.chair img{ position:absolute; display:block; }
+.chair .shadow{ position:absolute; border-radius:50%;
+  background:radial-gradient(closest-side, rgba(65,62,55,.30), rgba(65,62,55,.12) 60%, rgba(65,62,55,0)); }
+
+.col{ position:absolute; left:0; right:0; top:36px; display:flex; flex-direction:column; align-items:center; text-align:center; }
+.logo{ display:block; width:470px; }
+.msg{ display:flex; flex-direction:column; align-items:center; transform-origin:50% 50%; }
+.script{ font-family:'Pinyon Script',cursive; color:var(--burg); line-height:1.05; white-space:nowrap; font-size:140px; }
+.sub{ font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:var(--char); white-space:nowrap; font-size:44px; margin-top:30px; }
+.sub .dots{ letter-spacing:.06em; margin-right:-.16em; }
+.sub .dots i{ font-style:normal; }
+
+.amount{ font-weight:800; color:var(--burg); line-height:1; white-space:nowrap; letter-spacing:-.02em; margin-top:4px;
+  font-feature-settings:'tnum' 1, 'lnum' 1; display:flex; align-items:baseline; justify-content:center; transform-origin:50% 50%; }
+.amount .eur{ font-size:.5em; margin-right:.12em; color:var(--terra); letter-spacing:0; }
+
+.meter{ width:1300px; margin-top:20px; }
+.bar{ position:relative; height:16px; border-radius:999px; background:rgba(199,123,109,.28); overflow:hidden; }
+.bar i{ position:absolute; left:0; top:0; bottom:0; border-radius:999px; background:var(--burg); }
+.icons{ display:flex; margin-top:14px; }
+.icons span{ flex:1; display:flex; justify-content:center; }
+.icons img{ height:66px; display:block; transform-origin:50% 100%; }
+
+/* le 8 poltrone grandi: due file da 4, quella dietro sfalsata */
+.fleet{ position:absolute; left:0; right:0; top:0; height:1080px; pointer-events:none; }
+.fleet img{ position:absolute; display:block; transform-origin:50% 100%; filter:drop-shadow(0 10px 12px rgba(65,62,55,.22)); }
+
+.band{ position:absolute; left:0; right:0; bottom:0; height:110px; }
+.band svg{ position:absolute; inset:0; width:100%; height:100%; }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="disc b"></div>
+  <div class="disc a"></div>
+  <canvas id="fx" width="1920" height="1080"></canvas>
+
+  <div class="chair" id="chair"><div class="shadow" id="shadow"></div><img id="chairImg" alt=""></div>
+
+  <div class="col">
+    <img class="logo" id="logo" src="assets/logo_circolo.png" alt="Circolo Carlo Alberto 1886 – Padula">
+    <div class="msg" id="msg">
+      <div class="script" id="grazie">Grazie a tutti voi</div>
+      <div class="sub" id="sub">siamo riusciti a raccogliere<span class="dots"><i>.</i><i>.</i><i>.</i></span></div>
+    </div>
+    <div class="amount" id="amount"><span class="eur">€</span><span id="num">9.320</span></div>
+    <div class="meter" id="meter">
+      <div class="bar"><i id="fill"></i></div>
+      <div class="icons" id="icons"></div>
+    </div>
+  </div>
+
+  <div class="fleet" id="fleet"></div>
+
+  <div class="band">
+    <svg viewBox="0 0 106 32" preserveAspectRatio="none"><path d="M0 12 C 30 0, 70 0, 106 6 L106 32 L0 32 Z" fill="#92433E"/></svg>
+  </div>
+</div>
+
+<script>
+const params = new URLSearchParams(location.search);
+const PARTE = +(params.get('parte') || 3);
+const TOTAL = +(params.get('totale') || 9320);
+const N = +(params.get('poltrone') || 8);
+const CHAIR = JSON.parse(params.get('sedia') || 'null');   // {dir, frames, fps, box:[x0,y0,x1,y1], foot:[x,y], base:[x0,x1]}
+
+// tempi (secondi) di ciascuna parte
+const T = {
+  1: { dur: CHAIR ? CHAIR.frames / CHAIR.fps : 10 },
+  3: { dur: 17, chairOut: [0, 1.0], logo: [0.7, 1.6], grazie: [1.0, 2.6], sub: [2.4, 3.2], dots: 3.3,
+       shrink: [4.8, 5.9], count: [6.3, 13.3], fireworks: 13.35 },
+  5: { dur: 7, out: [0, 0.8], move: [0.3, 1.5], fleet: 1.1 },
+}[PARTE];
+const INTRO_SCALE = 1.5;    // testo ingrandito nell'apertura della parte 3
+const CHAIR_SCALE = 1.45;   // ingrandimento della poltrona del video (sorgente 1280x720)
+const FINAL_SCALE = 0.56;   // cifra ridotta nella parte 5
+
+const fmt = n => n.toLocaleString('it-IT');
+const clamp = x => Math.min(1, Math.max(0, x));
+const seg = (t, a, b) => clamp((t - a) / (b - a));
+const easeOut = x => 1 - Math.pow(1 - x, 3);
+const easeInOut = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+const backOut = x => { const c = 1.9; return x <= 0 ? 0 : 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); };
+
+function bezier(x1, y1, x2, y2) {
+  const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+  const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+  const sx = s => ((ax * s + bx) * s + cx) * s;
+  const sy = s => ((ay * s + by) * s + cy) * s;
+  return x => { let lo = 0, hi = 1, s = x;
+    for (let i = 0; i < 40; i++) { s = (lo + hi) / 2; if (sx(s) < x) lo = s; else hi = s; }
+    return sy(s); };
+}
+const countEase = bezier(0.42, 0, 0.12, 1);
+
+const $ = id => document.getElementById(id);
+const els = {
+  logo: $('logo'), msg: $('msg'), grazie: $('grazie'), sub: $('sub'), dots: [...document.querySelectorAll('.dots i')],
+  amount: $('amount'), num: $('num'), meter: $('meter'), fill: $('fill'), icons: $('icons'), fleet: $('fleet'),
+  chair: $('chair'), chairImg: $('chairImg'), shadow: $('shadow'), fx: $('fx'),
+};
+
+function fadeUp(el, p, dist, extra = '') {
+  const e = easeOut(p);
+  el.style.opacity = e;
+  el.style.transform = `translateY(${(1 - e) * dist}px) ${extra}`;
+}
+const show = (el, on) => { el.style.opacity = on ? 1 : 0; };
+
+/* ---------- poltroncine sulla barra ---------- */
+const iconEls = [];
+for (let i = 0; i < N; i++) {
+  const s = document.createElement('span'); const im = new Image();
+  im.src = 'assets/poltrona_icona.png'; s.appendChild(im); els.icons.appendChild(s); iconEls.push(im);
+}
+// istante in cui la barra raggiunge ciascuna soglia (i+1)/N
+const iconTimes = (() => {
+  if (PARTE !== 3) return [];
+  const out = []; const [a, b] = T.count;
+  for (let i = 1; i <= N; i++) {
+    let lo = a, hi = b;
+    for (let k = 0; k < 50; k++) { const m = (lo + hi) / 2; if (countEase(seg(m, a, b)) < i / N - 1e-6) lo = m; else hi = m; }
+    out.push(hi);
+  }
+  return out;
+})();
+
+/* ---------- le 8 poltrone grandi ---------- */
+const fleetEls = [];
+
+/* ---------- fuochi d'artificio (sobri, deterministici) ---------- */
+function rng(seed) { return () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }; }
+const BURSTS = [
+  // ai lati, dove non ci sono scritte
+  { dt: 0.00, x: 175, y: 560, n: 30, v: 430, cols: ['#92433E', '#C77B6D', '#B8973F'] },
+  { dt: 0.35, x: 1745, y: 520, n: 30, v: 430, cols: ['#C77B6D', '#92433E', '#B8973F'] },
+  { dt: 0.75, x: 1560, y: 200, n: 26, v: 380, cols: ['#B8973F', '#92433E', '#5A5337'] },
+  { dt: 1.10, x: 380, y: 250, n: 26, v: 380, cols: ['#B8973F', '#92433E', '#F4EDE3'] },
+].map((b, j) => { const r = rng(1234 + j * 97);
+  b.parts = Array.from({ length: b.n }, (_, i) => ({
+    ang: (i / b.n) * Math.PI * 2 + (r() - .5) * .25, sp: b.v * (0.65 + 0.35 * r()), col: b.cols[i % b.cols.length], size: 4.5 + 2.5 * r() }));
+  return b; });
+const LIFE = 1.9, DRAG = 2.4, GRAV = 260;
+function sparkPos(b, p, a) {
+  const d = (1 - Math.exp(-DRAG * a)) / DRAG;
+  return [b.x + Math.cos(p.ang) * p.sp * d, b.y + Math.sin(p.ang) * p.sp * d + 0.5 * GRAV * a * a * 0.6];
+}
+function drawFireworks(t) {
+  const c = els.fx.getContext('2d'); c.clearRect(0, 0, 1920, 1080);
+  if (PARTE !== 3) return;
+  for (const b of BURSTS) {
+    const a = t - (T.fireworks + b.dt);
+    if (a < 0 || a > LIFE) continue;
+    const fade = Math.pow(1 - a / LIFE, 1.6);
+    for (const p of b.parts) {
+      c.fillStyle = p.col;
+      for (let k = 0; k < 5; k++) {          // scia
+        const ak = a - k * 0.035; if (ak < 0) break;
+        const [x, y] = sparkPos(b, p, ak);
+        c.globalAlpha = fade * (1 - k / 5) * 0.9;
+        c.beginPath(); c.arc(x, y, p.size * (1 - k * 0.15), 0, Math.PI * 2); c.fill();
+      }
+    }
+  }
+  c.globalAlpha = 1;
+}
+
+/* ---------- poltrona del video (fotogrammi RGBA già scontornati) ---------- */
+function placeChair() {
+  if (!CHAIR) { els.chair.style.display = 'none'; return; }
+  const S = CHAIR_SCALE, [x0, y0, x1, y1] = CHAIR.box, [fx, fy] = CHAIR.foot;
+  // poltrona centrata sul suo ingombro, piedini a y = 975
+  const ox = 960 - fx * S, oy = 975 - fy * S;
+  els.chairImg.style.left = (ox + x0 * S) + 'px'; els.chairImg.style.top = (oy + y0 * S) + 'px';
+  els.chairImg.style.width = ((x1 - x0) * S) + 'px'; els.chairImg.style.height = ((y1 - y0) * S) + 'px';
+  // ombra morbida sotto la base
+  const [b0, b1] = CHAIR.base, [by0, by1] = CHAIR.baseY || [fy - 60, fy];
+  const w = (b1 - b0) * S * 1.3, h = (by1 - by0) * S * 1.6;
+  Object.assign(els.shadow.style, { left: (ox + (b0 + b1) / 2 * S - w / 2) + 'px', top: (oy + (by0 + by1) / 2 * S - h / 2 + 6) + 'px',
+    width: w + 'px', height: h + 'px' });
+  els.chair.style.width = '1920px'; els.chair.style.height = '1000px';
+  els.chair.style.transformOrigin = `960px 975px`;
+}
+async function setChairFrame(i) {
+  const src = `${CHAIR.dir}/${String(i + 1).padStart(4, '0')}.png`;
+  if (els.chairImg.dataset.src === src) return;
+  els.chairImg.dataset.src = src; els.chairImg.src = src;
+  await els.chairImg.decode();
+}
+
+/* ---------- layout ---------- */
+function fit() {
+  els.num.textContent = fmt(TOTAL);
+  let size = 100;
+  els.amount.style.fontSize = size + 'px';
+  size = Math.min(410, size * 0.82 * 1920 / els.amount.getBoundingClientRect().width);
+  els.amount.style.fontSize = size.toFixed(1) + 'px';
+  const r = els.msg.getBoundingClientRect();
+  els.msgDy = 540 - (r.top + r.height / 2);
+  const ra = els.amount.getBoundingClientRect();
+  els.amountDy = 312 - (ra.top + ra.height / 2);   // parte 5: la cifra sale verso l'alto
+  placeChair();
+  buildFleet();
+}
+
+function buildFleet() {
+  if (PARTE !== 5) return;
+  const ar = 1.16;    // larghezza/altezza di assets/poltrona.png
+  // fila dietro: 4 poltrone; fila davanti: 4 poltrone sfalsate di mezza posizione
+  // griglia 4 x 2, centrata
+  const step = 430, cx = [0, 1, 2, 3].map(i => 960 + (i - 1.5) * step);
+  const rows = [ { h: 265, bottom: 690, cx }, { h: 265, bottom: 970, cx } ];
+  let k = 0;
+  for (const r of rows) for (const cx of r.cx) {
+    const im = new Image(); im.src = 'assets/poltrona.png';
+    const w = r.h * ar;
+    Object.assign(im.style, { left: (cx - w / 2) + 'px', top: (r.bottom - r.h) + 'px', height: r.h + 'px', width: w + 'px' });
+    im.dataset.k = k++;
+    els.fleet.appendChild(im); fleetEls.push(im);
+  }
+}
+
+/* ---------- stati delle tre parti ---------- */
+function stateCounter(t) {
+  // parte 3: ritorna i valori del contatore al tempo t
+  const sh = easeInOut(seg(t, ...T.shrink));
+  els.msg.style.transform = `translateY(${(1 - sh) * els.msgDy}px) scale(${INTRO_SCALE + (1 - INTRO_SCALE) * sh})`;
+
+  const g = seg(t, ...T.grazie), ge = 1 - Math.pow(1 - g, 2);
+  els.grazie.style.clipPath = `inset(-30% ${(1 - ge) * 100}% -30% -5%)`;
+  els.grazie.style.opacity = g > 0 ? 1 : 0;
+  fadeUp(els.sub, seg(t, ...T.sub), 18);
+  els.dots.forEach((el, i) => { el.style.opacity = easeOut(seg(t, T.dots + i * 0.35, T.dots + 0.25 + i * 0.35)); });
+
+  fadeUp(els.amount, seg(t, T.shrink[1] - 0.3, T.shrink[1] + 0.4), 21);
+  els.meter.style.opacity = easeOut(seg(t, T.shrink[1] - 0.1, T.shrink[1] + 0.5));
+  const p = countEase(seg(t, ...T.count));
+  els.num.textContent = fmt(Math.round(TOTAL * p));
+  els.fill.style.width = (p * 100) + '%';
+
+  iconEls.forEach((im, i) => {
+    const a = seg(t, iconTimes[i], iconTimes[i] + 0.45);
+    im.style.opacity = clamp(a * 3);
+    im.style.transform = `scale(${a > 0 ? backOut(a) : 0})`;
+  });
+
+  const a = seg(t, T.count[1], T.count[1] + 0.9);
+  const pulse = a > 0 && a < 1 ? Math.sin(a * Math.PI) * 0.06 : 0;
+  els.amount.style.transform += ` scale(${1 + pulse})`;
+}
+
+window.renderAt = async function (t) {
+  if (PARTE === 1) {
+    // video invertito: si parte dall'ultimo fotogramma della sorgente
+    const i = Math.min(CHAIR.frames - 1, Math.floor(t * CHAIR.fps + 1e-6));
+    await setChairFrame(CHAIR.frames - 1 - i);
+    [els.logo, els.msg, els.amount, els.meter].forEach(e => show(e, false));
+    els.chair.style.opacity = 1;
+  } else if (PARTE === 3) {
+    if (CHAIR) await setChairFrame(0);
+    const o = easeInOut(seg(t, ...T.chairOut));
+    els.chair.style.opacity = 1 - o;
+    els.chair.style.transform = `translateY(${o * 30}px) scale(${1 - 0.08 * o})`;
+    fadeUp(els.logo, seg(t, ...T.logo), 28);
+    show(els.msg, true);
+    stateCounter(t);
+    drawFireworks(t);
+  } else if (PARTE === 5) {
+    els.chair.style.display = 'none';
+    els.logo.style.opacity = 1;
+    els.num.textContent = fmt(TOTAL);
+    els.fill.style.width = '100%';
+    iconEls.forEach(im => { im.style.opacity = 1; im.style.transform = 'none'; });
+    // testo e barra escono, la cifra si riduce e sale
+    const o = easeInOut(seg(t, ...T.out));
+    els.msg.style.opacity = 1 - o;
+    els.msg.style.transform = `translateY(${-20 * o}px)`;
+    els.grazie.style.clipPath = 'none';
+    els.dots.forEach(el => (el.style.opacity = 1));
+    els.meter.style.opacity = 1 - o;
+    const m = easeInOut(seg(t, ...T.move));
+    els.amount.style.opacity = 1;
+    els.amount.style.transform = `translateY(${m * els.amountDy}px) scale(${1 + (FINAL_SCALE - 1) * m})`;
+    fleetEls.forEach((im, k) => {
+      const order = k;   // prima fila da sinistra a destra, poi la seconda
+      const a = seg(t, T.fleet + order * 0.2, T.fleet + order * 0.2 + 0.7);
+      im.style.opacity = clamp(a * 2.5);
+      im.style.transform = `translateY(${(1 - easeOut(a)) * 50}px) scale(${0.85 + 0.15 * backOut(a)})`;
+    });
+  }
+};
+
+window.ready = document.fonts.ready
+  .then(() => Promise.all([...document.images].map(im => im.complete ? 0 : new Promise(r => (im.onload = im.onerror = r)))))
+  .then(() => { fit(); return Promise.all([...document.images].map(im => im.decode().catch(() => 0))); })
+  .then(async () => { await renderAt(+(params.get('t') ?? T.dur)); return T; });
+</script>
+</body>
+</html>
