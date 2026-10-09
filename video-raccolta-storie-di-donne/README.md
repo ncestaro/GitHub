@@ -9,7 +9,7 @@ locandina e brochure.
 |---|---|---|
 | `export/1_poltrona.mp4` | la poltrona si reclina (video Higgsfield invertito, scontornato) sullo sfondo dell'evento | 10 s |
 | `export/2_fermo_poltrona.png` | fermo immagine: ultimo fotogramma di 1 | – |
-| `export/3_contatore.mp4` | la poltrona sparisce, "Grazie a tutti voi – siamo riusciti a raccogliere…", contatore da € 0 a € 9.320; sulla barra compare una poltroncina ogni 1/8 dell'importo (≈ 1.165 €); a fine conteggio fuochi d'artificio sobri | 17 s |
+| `export/3_contatore.mp4` | la poltrona sparisce, "Grazie a tutti voi – siamo riusciti a raccogliere…", contatore da € 0 a € 9.320 in 10,5 s; sulla barra compare una poltroncina ogni 1/8 dell'importo (≈ 1.165 €); a fine conteggio fuochi d'artificio sobri | 20,5 s |
 | `export/4_fermo_importo.png` | fermo immagine: ultimo fotogramma di 3 | – |
 | `export/5_poltrone.mp4` | la cifra si riduce e sale, compaiono le 8 poltrone grandi "a sedia" (griglia 4 × 2) | 7 s |
 | `export/sequenza_completa.mp4` | le cinque parti di fila (fermi da 3 s), per anteprima | – |

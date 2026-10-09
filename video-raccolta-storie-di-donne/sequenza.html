@@ -104,8 +104,8 @@ const CHAIR = JSON.parse(params.get('sedia') || 'null');   // {dir, frames, fps,
 // tempi (secondi) di ciascuna parte
 const T = {
   1: { dur: CHAIR ? CHAIR.frames / CHAIR.fps : 10 },
-  3: { dur: 17, chairOut: [0, 1.0], logo: [0.7, 1.6], grazie: [1.0, 2.6], sub: [2.4, 3.2], dots: 3.3,
-       shrink: [4.8, 5.9], count: [6.3, 13.3], fireworks: 13.35 },
+  3: { dur: 20.5, chairOut: [0, 1.0], logo: [0.7, 1.6], grazie: [1.0, 2.6], sub: [2.4, 3.2], dots: 3.3,
+       shrink: [4.8, 5.9], count: [6.3, 16.8], fireworks: 16.85 },
   5: { dur: 7, out: [0, 0.8], move: [0.3, 1.5], fleet: 1.1 },
 }[PARTE];
 const INTRO_SCALE = 1.5;    // testo ingrandito nell'apertura della parte 3
