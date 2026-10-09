@@ -11,7 +11,7 @@ locandina e brochure.
 | `export/2_fermo_poltrona.png` | fermo immagine: ultimo fotogramma di 1 | – |
 | `export/3_contatore.mp4` | la poltrona sparisce, "Grazie a tutti voi – siamo riusciti a raccogliere…", contatore da € 0 a € 9.320; sulla barra compare una poltroncina ogni 1/8 dell'importo (≈ 1.165 €); a fine conteggio fuochi d'artificio sobri | 17 s |
 | `export/4_fermo_importo.png` | fermo immagine: ultimo fotogramma di 3 | – |
-| `export/5_poltrone.mp4` | la cifra si riduce e sale, compaiono le 8 poltrone grandi | 7 s |
+| `export/5_poltrone.mp4` | la cifra si riduce e sale, compaiono le 8 poltrone grandi "a sedia" (griglia 4 × 2) | 7 s |
 | `export/sequenza_completa.mp4` | le cinque parti di fila (fermi da 3 s), per anteprima | – |
 
 Ogni parte inizia esattamente dove finisce la precedente, quindi si possono montare o lanciare una dopo l'altra.
@@ -19,10 +19,9 @@ Ogni parte inizia esattamente dove finisce la precedente, quindi si possono mont
 Per rigenerare:
 
 ```
-pip install playwright rembg[cpu] scipy        # richiede anche ffmpeg
+pip install playwright rembg[cpu]        # richiede anche ffmpeg
 python3 tools/scontorna_fotogrammi.py <fotogrammi> <maschere>          # ~8 s a fotogramma su CPU
-python3 tools/prepara_video_poltrona.py <video.mp4> <maschere> build/sedia
-python3 tools/prepara_poltrona.py <foto_poltrona.jpg>                  # assets/poltrona*.png
+python3 tools/prepara_video_poltrona.py <video.mp4> <maschere> build/sedia   # anche assets/poltrona_dritta.png e l'icona
 python3 render_sequenza.py --totale 9320
 ```
 

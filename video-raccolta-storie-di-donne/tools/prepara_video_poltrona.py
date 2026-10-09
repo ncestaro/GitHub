@@ -1,7 +1,8 @@
 """Compone i fotogrammi RGBA della poltrona dal video sorgente e dalle maschere.
 
 Uso: python3 tools/prepara_video_poltrona.py <video.mp4> <cartella_maschere> <cartella_uscita>
-Scrive <uscita>/0001.png ... (ritagliati sul riquadro comune) e <uscita>/meta.json.
+Scrive <uscita>/0001.png ... (ritagliati sul riquadro comune) e <uscita>/meta.json,
+più assets/poltrona_dritta.png (ultimo fotogramma, poltrona "a sedia") e assets/poltrona_icona.png.
 Le maschere si ottengono con tools/scontorna_fotogrammi.py (rembg, modello birefnet-general-lite).
 """
 import json
@@ -43,7 +44,18 @@ with tempfile.TemporaryDirectory() as tmp:
         im = Image.open(f).convert("RGBA")
         im.putalpha(m)
         im.crop(box).save(out / f.name, optimize=False, compress_level=3)
+    # poltrona "a sedia" (ultimo fotogramma della sorgente) per le 8 poltrone grandi e per l'icona
+    assets = pathlib.Path(__file__).resolve().parent.parent / "assets"
+    im = Image.open(frames[-1]).convert("RGBA")
+    im.putalpha(alphas[-1])
+    im = im.crop(alphas[-1].point(lambda v: 255 if v > 10 else 0).getbbox())
+    im.save(assets / "poltrona_dritta.png", optimize=True)
+    sil = Image.new("RGBA", im.size, (146, 67, 62, 255))
+    sil.putalpha(im.getchannel("A").point(lambda v: 255 if v > 110 else 0).filter(ImageFilter.GaussianBlur(0.8)))
+    sil = sil.resize((round(im.size[0] * 132 / im.size[1]), 132), Image.LANCZOS)
+    sil.save(assets / "poltrona_icona.png", optimize=True)
+    upright_ar = round(im.size[0] / im.size[1], 4)
 meta = {"dir": out.name, "frames": len(frames), "fps": fps, "box": box,
-        "foot": [int((box[0] + box[2]) / 2), foot_y], "base": [int(bx.min()), int(bx.max())], "baseY": base_y}
+        "foot": [int((box[0] + box[2]) / 2), foot_y], "base": [int(bx.min()), int(bx.max())], "baseY": base_y, "drittaAR": upright_ar}
 (out / "meta.json").write_text(json.dumps(meta))
 print(meta)

@@ -242,14 +242,14 @@ function fit() {
 
 function buildFleet() {
   if (PARTE !== 5) return;
-  const ar = 1.16;    // larghezza/altezza di assets/poltrona.png
+  const ar = (CHAIR && CHAIR.drittaAR) || 0.95;   // larghezza/altezza di assets/poltrona_dritta.png
   // fila dietro: 4 poltrone; fila davanti: 4 poltrone sfalsate di mezza posizione
-  // griglia 4 x 2, centrata
-  const step = 430, cx = [0, 1, 2, 3].map(i => 960 + (i - 1.5) * step);
-  const rows = [ { h: 265, bottom: 690, cx }, { h: 265, bottom: 970, cx } ];
+  // griglia 4 x 2, centrata, poltrone "a sedia"
+  const step = 450, cx = [0, 1, 2, 3].map(i => 960 + (i - 1.5) * step);
+  const rows = [ { h: 300, bottom: 692, cx }, { h: 300, bottom: 985, cx } ];
   let k = 0;
   for (const r of rows) for (const cx of r.cx) {
-    const im = new Image(); im.src = 'assets/poltrona.png';
+    const im = new Image(); im.src = 'assets/poltrona_dritta.png';
     const w = r.h * ar;
     Object.assign(im.style, { left: (cx - w / 2) + 'px', top: (r.bottom - r.h) + 'px', height: r.h + 'px', width: w + 'px' });
     im.dataset.k = k++;
