@@ -6,6 +6,8 @@
 <style>
 /*
   Sequenza per lo schermo del teatro (1920x1080, oppure 1440x1080 con ?ar=43), grafica di "Storie di donne straordinariamente semplici".
+  ?parte=0  apertura: la figura della locandina si compone ritaglio per ritaglio, logo, titolo, ospedale;
+            poi transizione alla poltrona (l'ultimo fotogramma è il primo della parte 1)
   ?parte=1  la poltrona si reclina (video invertito, scontornato) sullo sfondo dell'evento
   ?parte=3  la poltrona sparisce, ringraziamento, contatore con 8 poltroncine sulla barra, fuochi d'artificio
   ?parte=5  la cifra si riduce e compaiono le 8 poltrone grandi
@@ -62,6 +64,15 @@ body{ font-family:'Inter',sans-serif; color:var(--char); }
 .fleet{ position:absolute; left:0; right:0; top:0; height:1080px; pointer-events:none; }
 .fleet img{ position:absolute; display:block; transform-origin:50% 100%; filter:drop-shadow(0 10px 12px rgba(65,62,55,.22)); }
 
+.intro{ position:absolute; inset:0; display:none; }
+.intro .fig{ position:absolute; transform-origin:0 0; }
+.intro .fig img{ position:absolute; left:0; top:0; width:100%; height:100%; display:block; }
+.intro .right{ position:absolute; top:0; bottom:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+.intro .tit{ position:relative; }
+.intro .tit img{ position:absolute; display:block; }
+.intro .osp{ font-weight:600; color:var(--char); text-align:center; line-height:1.3; }
+.intro .osp b{ color:var(--burg); font-weight:800; }
+
 .band{ position:absolute; left:0; right:0; bottom:0; height:110px; }
 .band svg{ position:absolute; inset:0; width:100%; height:100%; }
 </style>
@@ -89,6 +100,15 @@ body{ font-family:'Inter',sans-serif; color:var(--char); }
 
   <div class="fleet" id="fleet"></div>
 
+  <div class="intro" id="intro">
+    <div class="fig" id="fig"></div>
+    <div class="right" id="introRight">
+      <img class="logo" id="introLogo" src="assets/logo_circolo.png" alt="Circolo Carlo Alberto 1886 – Padula">
+      <div class="tit" id="tit"></div>
+      <div class="osp" id="osp">per il Reparto di Oncologia<br>dell'Ospedale <b>“Luigi Curto”</b> di Polla</div>
+    </div>
+  </div>
+
   <div class="band">
     <svg viewBox="0 0 106 32" preserveAspectRatio="none"><path d="M0 12 C 30 0, 70 0, 106 6 L106 32 L0 32 Z" fill="#92433E"/></svg>
   </div>
@@ -108,6 +128,9 @@ const CHAIR = JSON.parse(params.get('sedia') || 'null');   // {dir, frames, fps,
 
 // tempi (secondi) di ciascuna parte
 const T = {
+  0: { dur: 13, band: [0, 0.8], disc: [0.3, 1.3], body: 0.9, hair: 1.5, eye: [3.0, 3.6], leaves: 2.2,
+       logo: [2.4, 3.2], tit: [[3.2, 4.4], [4.2, 5.5], [5.3, 6.1]], osp: [6.4, 7.2],
+       out: [10.2, 11.3], morph: [10.4, 11.9], bg: [10.9, 12.1], chairIn: [11.6, 13.0] },
   1: { dur: CHAIR ? CHAIR.frames / CHAIR.fps : 10 },
   3: { dur: 20.5, chairOut: [0, 1.0], logo: [0.7, 1.6], grazie: [1.0, 2.6], sub: [2.4, 3.2], dots: 3.3,
        shrink: [4.8, 5.9], count: [6.3, 16.8], fireworks: 16.85 },
@@ -243,6 +266,7 @@ function fit() {
   els.amountDy = 312 - (ra.top + ra.height / 2);   // parte 5: la cifra sale verso l'alto
   placeChair();
   buildFleet();
+  buildIntro();
 }
 
 function buildFleet() {
@@ -291,8 +315,105 @@ function stateCounter(t) {
   els.amount.style.transform += ` scale(${1 + pulse})`;
 }
 
+/* ---------- parte 0: apertura con la figura della locandina ---------- */
+const INTRO = {"figura": {"viewBox": [62.5, 65.30001831054688, 696.5999755859375, 817.3999938964844], "pezzi": [{"file": "figura_01.svg", "classe": "st0", "box": [86.5, 89.30001831054688, 648.5999755859375, 648.5999755859375]}, {"file": "figura_02.svg", "classe": "st12", "box": [283.8000183105469, 371.7999572753906, 350.2265319824219, 419.3999938964844]}, {"file": "figura_03.svg", "classe": "st12", "box": [461.841552734375, 152.6451416015625, 231.71722412109375, 325.59747314453125]}, {"file": "figura_04.svg", "classe": "st6", "box": [338.1999816894531, 153, 309.5999450683594, 397.278076171875]}, {"file": "figura_05.svg", "classe": "st6", "box": [259.1999816894531, 135.80001831054688, 337.2000427246094, 374.45306396484375]}, {"file": "figura_06.svg", "classe": "st16", "box": [317.1934814453125, 561.4000244140625, 201.89031982421875, 297.29998779296875]}, {"file": "figura_07.svg", "classe": "st4", "box": [584.0999755859375, 266.0000305175781, 53.20001220703125, 30.37322998046875]}, {"file": "figura_08.svg", "classe": "st6", "box": [333.5052490234375, 111.9195327758789, 314.29473876953125, 244.88046264648438]}, {"file": "figura_09.svg", "classe": "st16", "box": [534.2000122070312, 566.2000122070312, 123.4351806640625, 239.4906005859375]}, {"file": "figura_10.svg", "classe": "st16", "box": [493.4482421875, 552.2999877929688, 107.852294921875, 267.29998779296875]}, {"file": "figura_11.svg", "classe": "st16", "box": [348.1000061035156, 591.4999389648438, 192.30465698242188, 234.339599609375]}]}, "titolo": [{"file": "titolo_1.svg", "viewBox": [738.7892456054688, 234.10826110839844, 647.8486938476562, 194.33067321777344]}, {"file": "titolo_2.svg", "viewBox": [868.0271606445312, 361.20001220703125, 672.6760864257812, 123.51885986328125]}, {"file": "titolo_3.svg", "viewBox": [1039.5863037109375, 459.40008544921875, 288.766845703125, 146.09991455078125]}]};
+const FIGL = W === 1920   // posizione della figura e della colonna di destra per formato
+  ? { s: 1.3, cx: 500, neck: 1000, right: [930, 1880], logoW: 430, titW: 900, osp: 40 }
+  : { s: 1.12, cx: 355, neck: 1000, right: [730, 1410], logoW: 360, titW: 650, osp: 32 };
+const figEls = [], titEls = [];
+function buildIntro() {
+  if (PARTE !== 0) return;
+  $('intro').style.display = 'block';
+  const [vx, vy, vw, vh] = INTRO.figura.viewBox, S = FIGL.s, fig = $('fig');
+  // il centro del disco (410.8, 413.6 nel file) va a x = cx; il taglio del collo (y 745) sotto la fascia
+  const left = FIGL.cx - (410.8 - vx) * S, top = FIGL.neck - (745 - vy) * S;
+  Object.assign(fig.style, { left: left + 'px', top: top + 'px', width: vw * S + 'px', height: vh * S + 'px' });
+  INTRO.figura.pezzi.forEach(p => { const im = new Image(); im.src = 'assets/intro/' + p.file; fig.appendChild(im); figEls.push(im); });
+  els.figBox = { left, top, S, vx, vy };
+  const R = $('introRight'); R.style.left = FIGL.right[0] + 'px'; R.style.width = (FIGL.right[1] - FIGL.right[0]) + 'px';
+  $('introLogo').style.width = FIGL.logoW + 'px';
+  const ls = INTRO.titolo.map(l => l.viewBox), ux0 = Math.min(...ls.map(v => v[0])), uy0 = Math.min(...ls.map(v => v[1]));
+  const ux1 = Math.max(...ls.map(v => v[0] + v[2])), uy1 = Math.max(...ls.map(v => v[1] + v[3])), ts = FIGL.titW / (ux1 - ux0);
+  const tit = $('tit'); Object.assign(tit.style, { width: FIGL.titW + 'px', height: (uy1 - uy0) * ts + 'px', margin: '34px 0 40px' });
+  INTRO.titolo.forEach(l => { const im = new Image(); im.src = 'assets/intro/' + l.file;
+    const [x, y, w, h] = l.viewBox;
+    Object.assign(im.style, { left: (x - ux0) * ts + 'px', top: (y - uy0) * ts + 'px', width: w * ts + 'px', height: h * ts + 'px' });
+    tit.appendChild(im); titEls.push(im); });
+  $('osp').style.fontSize = FIGL.osp + 'px';
+}
+
+function stateIntro(t) {
+  const discA = document.querySelector('.disc.a'), discB = document.querySelector('.disc.b');
+  const band = document.querySelector('.band');
+  const b = easeOut(seg(t, ...T.band));
+  band.style.transform = `translateY(${(1 - b) * 100}%)`;
+
+  // composizione della figura, dal fondo verso il davanti
+  const P = INTRO.figura.pezzi, { left, top, S, vx, vy } = els.figBox;
+  const out = easeInOut(seg(t, ...T.out));
+  figEls.forEach((im, i) => {
+    const cls = P[i].classe, [bx, by, bw, bh] = P[i].box;
+    const ox = (bx + bw / 2 - vx) * S, oy = (by + bh / 2 - vy) * S;   // centro del pezzo nel riquadro
+    im.style.transformOrigin = `${ox}px ${oy}px`;
+    let a = 0, tr = '';
+    if (i === 0) {                                   // disco: cresce dal centro
+      a = seg(t, ...T.disc); const e = backOut(a);
+      tr = `scale(${Math.max(0, e)})`;
+    } else if (cls === 'st12') {                     // viso e collo: salgono
+      a = seg(t, T.body + (i - 1) * 0.25, T.body + (i - 1) * 0.25 + 0.8);
+      tr = `translateY(${(1 - easeOut(a)) * 70}px)`;
+    } else if (cls === 'st6') {                      // ciocche di capelli: arrivano da sinistra
+      const k = { 3: 0, 4: 1, 7: 2 }[i];
+      a = seg(t, T.hair + k * 0.3, T.hair + k * 0.3 + 0.9);
+      tr = `translate(${(1 - easeOut(a)) * -110}px, ${(1 - easeOut(a)) * -30}px) rotate(${(1 - easeOut(a)) * -6}deg)`;
+    } else if (cls === 'st4') {                      // occhio
+      a = seg(t, ...T.eye); tr = `scaleY(${0.2 + 0.8 * easeOut(a)})`;
+    } else {                                         // foglie: crescono dal basso
+      const k = { 5: 0, 8: 1, 9: 2, 10: 3 }[i];
+      a = seg(t, T.leaves + k * 0.22, T.leaves + k * 0.22 + 0.9);
+      tr = `translateY(${(1 - easeOut(a)) * 260}px) rotate(${(1 - easeOut(a)) * (k % 2 ? 10 : -10)}deg)`;
+    }
+    let op = i === 0 ? (a > 0 ? 1 : 0) : clamp(a * 2.2);
+    // uscita: i ritagli si allontanano, il disco diventa il disco dell'angolo in alto a sinistra
+    if (i === 0 && t >= T.morph[0]) {
+      const m = easeInOut(seg(t, ...T.morph));
+      const r = 324.3 * S, cx = left + (410.8 - vx) * S, cy = top + (413.6 - vy) * S;
+      const sc = 1 + (320 / r - 1) * m, dx = (-80 - cx) * m, dy = (20 - cy) * m;
+      tr = `translate(${dx}px, ${dy}px) scale(${sc})`;
+      im.style.transformOrigin = `${(410.8 - vx) * S}px ${(413.6 - vy) * S}px`;
+      op = 1 - seg(t, T.morph[1] - 0.15, T.morph[1]);
+    } else if (i > 0 && out > 0) {
+      const dir = cls === 'st16' ? [0, 220] : cls === 'st6' ? [-200, -40] : [-60, 60];
+      tr += ` translate(${dir[0] * out}px, ${dir[1] * out}px)`;
+      op *= 1 - out;
+    }
+    im.style.transform = tr; im.style.opacity = op;
+  });
+
+  // colonna di destra
+  fadeUp($('introLogo'), seg(t, ...T.logo), 24);
+  titEls.forEach((im, k) => {
+    const a = easeInOut(seg(t, ...T.tit[k]));
+    im.style.clipPath = `inset(-20% ${(1 - a) * 100}% -20% -2%)`;
+  });
+  fadeUp($('osp'), seg(t, ...T.osp), 20);
+  const R = $('introRight');
+  R.style.opacity = 1 - out; R.style.transform = `translateX(${out * 80}px)`;
+
+  // sfondo della sequenza e poltrona
+  const g = easeInOut(seg(t, ...T.bg));
+  discB.style.opacity = g; discA.style.opacity = seg(t, T.morph[1] - 0.15, T.morph[1]);
+  const c = easeOut(seg(t, ...T.chairIn));
+  els.chair.style.opacity = c;
+  els.chair.style.transform = `translateY(${(1 - c) * 40}px) scale(${0.94 + 0.06 * c})`;
+}
+
 window.renderAt = async function (t) {
-  if (PARTE === 1) {
+  if (PARTE === 0) {
+    if (CHAIR) await setChairFrame(CHAIR.frames - 1);   // primo fotogramma della parte 1
+    [els.logo, els.msg, els.amount, els.meter].forEach(e => show(e, false));
+    stateIntro(t);
+  } else if (PARTE === 1) {
     // video invertito: si parte dall'ultimo fotogramma della sorgente
     const i = Math.min(CHAIR.frames - 1, Math.floor(t * CHAIR.fps + 1e-6));
     await setChairFrame(CHAIR.frames - 1 - i);

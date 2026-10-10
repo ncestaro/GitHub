@@ -1,0 +1,161 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="62.5 65.3 696.6 817.4" width="696.6" height="817.4"><defs>
+    <style>
+      .st0 {
+        fill: #c87e6f;
+      }
+
+      .st1 {
+        filter: url(#drop-shadow-22);
+      }
+
+      .st2 {
+        filter: url(#drop-shadow-28);
+      }
+
+      .st3 {
+        filter: url(#drop-shadow-21);
+      }
+
+      .st4 {
+        fill: #4c463f;
+      }
+
+      .st5 {
+        filter: url(#drop-shadow-25);
+      }
+
+      .st6 {
+        fill: #413d37;
+      }
+
+      .st7 {
+        filter: url(#drop-shadow-31);
+      }
+
+      .st8 {
+        isolation: isolate;
+      }
+
+      .st9 {
+        fill: #92433c;
+      }
+
+      .st10 {
+        filter: url(#drop-shadow-30);
+      }
+
+      .st11 {
+        filter: url(#drop-shadow-24);
+      }
+
+      .st12 {
+        fill: #efdfcc;
+      }
+
+      .st13 {
+        filter: url(#drop-shadow-23);
+      }
+
+      .st14 {
+        mix-blend-mode: multiply;
+      }
+
+      .st15 {
+        filter: url(#drop-shadow-26);
+      }
+
+      .st16 {
+        fill: #675d40;
+      }
+
+      .st17 {
+        filter: url(#drop-shadow-29);
+      }
+
+      .st18 {
+        filter: url(#drop-shadow-27);
+      }
+    </style>
+    <filter id="drop-shadow-21" x="65.2" y="70.6" width="699.6" height="699.6" filterUnits="userSpaceOnUse">
+      <feOffset dx="4.1" dy="6.9"/>
+      <feGaussianBlur result="blur" stdDeviation="8.4"/>
+      <feFlood flood-color="#1d1d1b" flood-opacity=".2"/>
+      <feComposite in2="blur" operator="in"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+    <filter id="drop-shadow-22" x="261.9" y="352.4" width="408.7" height="477.8" filterUnits="userSpaceOnUse">
+      <feOffset dx="7.3" dy="9.7"/>
+      <feGaussianBlur result="blur1" stdDeviation="9.7"/>
+      <feFlood flood-color="#1d1d1b" flood-opacity=".5"/>
+      <feComposite in2="blur1" operator="in"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+    <filter id="drop-shadow-23" x="441.7" y="135" width="285.1" height="378.2" filterUnits="userSpaceOnUse">
+      <feOffset dx="6.6" dy="8.8"/>
+      <feGaussianBlur result="blur2" stdDeviation="8.8"/>
+      <feFlood flood-color="#1d1d1b" flood-opacity=".5"/>
+      <feComposite in2="blur2" operator="in"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+    <filter id="drop-shadow-24" x="315.3" y="132.7" width="370.8" height="458.4" filterUnits="userSpaceOnUse">
+      <feOffset dx="7.6" dy="10.1"/>
+      <feGaussianBlur result="blur3" stdDeviation="10.1"/>
+      <feFlood flood-color="#1d1d1b" flood-opacity=".5"/>
+      <feComposite in2="blur3" operator="in"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+    <filter id="drop-shadow-25" x="236.4" y="115.4" width="398.4" height="435.6" filterUnits="userSpaceOnUse">
+      <feOffset dx="7.6" dy="10.1"/>
+      <feGaussianBlur result="blur4" stdDeviation="10.1"/>
+      <feFlood flood-color="#1d1d1b" flood-opacity=".5"/>
+      <feComposite in2="blur4" operator="in"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+    <filter id="drop-shadow-26" x="294.6" y="541.1" width="262.1" height="357.6" filterUnits="userSpaceOnUse">
+      <feOffset dx="7.5" dy="10"/>
+      <feGaussianBlur result="blur5" stdDeviation="10"/>
+      <feFlood flood-color="#1d1d1b" flood-opacity=".5"/>
+      <feComposite in2="blur5" operator="in"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+    <filter id="drop-shadow-27" x="579.1" y="261.1" width="68.4" height="45.4" filterUnits="userSpaceOnUse">
+      <feOffset dx="2.4" dy="2.4"/>
+      <feGaussianBlur result="blur6" stdDeviation="2.4"/>
+      <feFlood flood-color="#1d1d1b" flood-opacity=".2"/>
+      <feComposite in2="blur6" operator="in"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+    <filter id="drop-shadow-28" x="312.5" y="93.2" width="369.8" height="300.7" filterUnits="userSpaceOnUse">
+      <feOffset dx="6.9" dy="9.2"/>
+      <feGaussianBlur result="blur7" stdDeviation="9.2"/>
+      <feFlood flood-color="#1d1d1b" flood-opacity=".5"/>
+      <feComposite in2="blur7" operator="in"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+    <filter id="drop-shadow-29" x="517" y="550.9" width="169.4" height="285.6" filterUnits="userSpaceOnUse">
+      <feOffset dx="5.7" dy="7.6"/>
+      <feGaussianBlur result="blur8" stdDeviation="7.6"/>
+      <feFlood flood-color="#1d1d1b" flood-opacity=".5"/>
+      <feComposite in2="blur8" operator="in"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+    <filter id="drop-shadow-30" x="476.2" y="536.9" width="153.8" height="313.4" filterUnits="userSpaceOnUse">
+      <feOffset dx="5.7" dy="7.6"/>
+      <feGaussianBlur result="blur9" stdDeviation="7.6"/>
+      <feFlood flood-color="#1d1d1b" flood-opacity=".5"/>
+      <feComposite in2="blur9" operator="in"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+    <filter id="drop-shadow-31" x="329.7" y="575.3" width="241.2" height="283.4" filterUnits="userSpaceOnUse">
+      <feOffset dx="6.1" dy="8.1"/>
+      <feGaussianBlur result="blur10" stdDeviation="8.1"/>
+      <feFlood flood-color="#1d1d1b" flood-opacity=".5"/>
+      <feComposite in2="blur10" operator="in"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g class="st18">
+        <path class="st4" d="M637.3,293.2c-10.4,4.1-21.6,4-32.2,1-4.9-1.4-9.4-3.3-14-5.4-2.4-1.1-5-1.6-7-4,19.1,1.6,37.1-5.4,51.1-18.8-1.5,7.1-4.4,13.4-8,19.4-1.7,2.8,5.3,5.3,10.1,7.7Z"/>
+      </g>
+      </svg>

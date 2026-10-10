@@ -1,5 +1,6 @@
 """Esporta la sequenza per il teatro (1920x1080, 30 fps) da sequenza.html.
 
+  0_apertura.mp4        la figura della locandina si compone, logo, titolo, ospedale; transizione alla poltrona
   1_poltrona.mp4        la poltrona si reclina (video invertito) sullo sfondo dell'evento
   2_fermo_poltrona.png  ultimo fotogramma della parte 1
   3_contatore.mp4       la poltrona sparisce, ringraziamento, contatore con 8 poltroncine, fuochi
@@ -25,13 +26,13 @@ here = pathlib.Path(__file__).parent
 out = here / "export"
 out.mkdir(exist_ok=True)
 CHROME = "/opt/pw-browsers/chromium-1194/chrome-linux/chrome"
-NAMES = {1: "1_poltrona", 3: "3_contatore", 5: "5_poltrone"}
+NAMES = {0: "0_apertura", 1: "1_poltrona", 3: "3_contatore", 5: "5_poltrone"}
 STILLS = {1: "2_fermo_poltrona.png", 3: "4_fermo_importo.png", 5: "6_fermo_poltrone.png"}
 
 ap = argparse.ArgumentParser()
 ap.add_argument("--fps", type=int, default=30)
 ap.add_argument("--totale", type=int, default=9320)
-ap.add_argument("--parti", default="135")
+ap.add_argument("--parti", default="0135")
 ap.add_argument("--stills", action="store_true", help="solo anteprime PNG")
 ap.add_argument("--formato", default="169", choices=["169", "43"], help="16:9 (1920x1080) o 4:3 (1440x1080, in export/4_3)")
 ap.add_argument("--fermo", type=float, default=3.0, help="durata dei fermi immagine nella sequenza completa")
@@ -80,13 +81,14 @@ with sync_playwright() as p:
 if not args.stills and all((out / f"{n}.mp4").exists() for n in NAMES.values()):
     with tempfile.TemporaryDirectory() as tmp:
         parts = []
-        for parte, name in NAMES.items():
-            # ogni video seguito dal suo fermo immagine
+        for parte, name in list(NAMES.items())[1:]:
+            # ogni video seguito dal suo fermo immagine (l'apertura passa direttamente alla poltrona)
             still = pathlib.Path(tmp) / f"fermo{parte}.mp4"
             subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-loop", "1", "-framerate", str(args.fps),
                             "-i", str(out / STILLS[parte]), "-t", str(args.fermo), "-c:v", "libx264", "-crf", "16",
                             "-pix_fmt", "yuv420p", str(still)], check=True)
             parts += [out / f"{name}.mp4", still]
+        parts = [out / "0_apertura.mp4"] + parts
         lst = pathlib.Path(tmp) / "lista.txt"
         lst.write_text("".join(f"file '{x.resolve()}'\n" for x in parts))
         subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-f", "concat", "-safe", "0", "-i", str(lst),

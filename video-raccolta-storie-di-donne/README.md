@@ -7,6 +7,7 @@ locandina e brochure.
 
 | file | cosa | durata |
 |---|---|---|
+| `export/0_apertura.mp4` | la figura della locandina si compone ritaglio per ritaglio (vettoriale, dal file Illustrator), logo, titolo con il lettering originale, "per il Reparto di Oncologia dell'Ospedale “Luigi Curto” di Polla"; poi il disco diventa quello dell'angolo e compare la poltrona | 13 s |
 | `export/1_poltrona.mp4` | la poltrona si reclina (video Higgsfield invertito, scontornato) sullo sfondo dell'evento | 10 s |
 | `export/2_fermo_poltrona.png` | fermo immagine: ultimo fotogramma di 1 | – |
 | `export/3_contatore.mp4` | la poltrona sparisce, "Grazie a tutti voi – siamo riusciti a raccogliere…", contatore da € 0 a € 9.320 in 10,5 s; sulla barra compare una poltroncina ogni 1/8 dell'importo (≈ 1.165 €); a fine conteggio fuochi d'artificio sobri | 20,5 s |
@@ -18,6 +19,8 @@ locandina e brochure.
 La stessa serie in **4:3** (1440 × 1080) è in `export/4_3/`.
 
 ### PowerPoint
+
+(Da aggiornare: non contiene ancora l'apertura.)
 
 `export/Raccolta_9320_16-9.pptx` e `export/4_3/Raccolta_9320_4-3.pptx` (creati con `tools/crea_pptx.py [--formato 43]`):
 
@@ -37,6 +40,7 @@ Per rigenerare:
 
 ```
 pip install playwright rembg[cpu]        # richiede anche ffmpeg
+python3 tools/estrai_intro.py                     # ritagli e titolo da assets/intro/progetto_illustrator.svgz
 python3 tools/scontorna_fotogrammi.py <fotogrammi> <maschere>          # ~8 s a fotogramma su CPU
 python3 tools/prepara_video_poltrona.py <video.mp4> <maschere> build/sedia   # anche assets/poltrona_dritta.png e l'icona
 python3 render_sequenza.py --totale 9320 [--formato 43]
