@@ -117,7 +117,7 @@ body{ font-family:'Inter',sans-serif; color:var(--char); }
 <script>
 const params = new URLSearchParams(location.search);
 const PARTE = +(params.get('parte') || 3);
-const TOTAL = +(params.get('totale') || 11700);
+const TOTAL = +(params.get('totale') || 11770);
 // formato: 16:9 (1920x1080) oppure 4:3 (1440x1080)
 const W = params.get('ar') === '43' ? 1440 : 1920, CX = W / 2;
 document.documentElement.style.setProperty('--W', W + 'px');

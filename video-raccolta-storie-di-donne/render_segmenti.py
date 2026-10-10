@@ -11,7 +11,7 @@
 Ogni video inizia esattamente sull'ultimo fotogramma del precedente: nessuna transizione.
 Uscita in export/16_9/ (1920x1080) o export/4_3/ (1440x1080), 30 fps.
 Prima: tools/prepara_video_poltrona.py deve aver creato build/sedia/.
-Uso: python3 render_segmenti.py [--formato 169|43] [--solo 1234] [--totale 11700] [--poltrone 10]
+Uso: python3 render_segmenti.py [--formato 169|43] [--solo 1234] [--totale 11770] [--poltrone 10]
 """
 import argparse
 import json
@@ -38,7 +38,7 @@ ap = argparse.ArgumentParser()
 ap.add_argument("--formato", default="169", choices=["169", "43"])
 ap.add_argument("--solo", default="1234", help="quali segmenti esportare")
 ap.add_argument("--fps", type=int, default=30)
-ap.add_argument("--totale", type=int, default=11700)
+ap.add_argument("--totale", type=int, default=11770)
 ap.add_argument("--poltrone", type=int, default=10)
 ap.add_argument("--pausa", type=float, default=2.0, help="pausa al posto del clic nell'anteprima completa")
 args = ap.parse_args()
