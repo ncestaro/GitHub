@@ -320,13 +320,13 @@ function stateCounter(t) {
 /* ---------- parte 0: apertura con la figura della locandina ---------- */
 const INTRO = {"figura": {"viewBox": [62.5, 65.30001831054688, 696.5999755859375, 817.3999938964844], "pezzi": [{"file": "figura_01.svg", "classe": "st0", "box": [86.5, 89.30001831054688, 648.5999755859375, 648.5999755859375]}, {"file": "figura_02.svg", "classe": "st12", "box": [283.8000183105469, 371.7999572753906, 350.2265319824219, 419.3999938964844]}, {"file": "figura_03.svg", "classe": "st12", "box": [461.841552734375, 152.6451416015625, 231.71722412109375, 325.59747314453125]}, {"file": "figura_04.svg", "classe": "st6", "box": [338.1999816894531, 153, 309.5999450683594, 397.278076171875]}, {"file": "figura_05.svg", "classe": "st6", "box": [259.1999816894531, 135.80001831054688, 337.2000427246094, 374.45306396484375]}, {"file": "figura_06.svg", "classe": "st16", "box": [317.1934814453125, 561.4000244140625, 201.89031982421875, 297.29998779296875]}, {"file": "figura_07.svg", "classe": "st4", "box": [584.0999755859375, 266.0000305175781, 53.20001220703125, 30.37322998046875]}, {"file": "figura_08.svg", "classe": "st6", "box": [333.5052490234375, 111.9195327758789, 314.29473876953125, 244.88046264648438]}, {"file": "figura_09.svg", "classe": "st16", "box": [534.2000122070312, 566.2000122070312, 123.4351806640625, 239.4906005859375]}, {"file": "figura_10.svg", "classe": "st16", "box": [493.4482421875, 552.2999877929688, 107.852294921875, 267.29998779296875]}, {"file": "figura_11.svg", "classe": "st16", "box": [348.1000061035156, 591.4999389648438, 192.30465698242188, 234.339599609375]}]}, "titolo": [{"file": "titolo_1.svg", "viewBox": [738.7892456054688, 234.10826110839844, 647.8486938476562, 194.33067321777344]}, {"file": "titolo_2.svg", "viewBox": [868.0271606445312, 361.20001220703125, 672.6760864257812, 123.51885986328125]}, {"file": "titolo_3.svg", "viewBox": [1039.5863037109375, 459.40008544921875, 288.766845703125, 146.09991455078125]}]};
 // figura grande, tagliata dal bordo sinistro come nella locandina; colonna di destra; poltrona al posto del viso
-// ospBox: [sinistra, alto, larghezza] della riga dell'ospedale, in basso a destra;
+// ospTop/ospW: riga dell'ospedale, centrata sotto logo e titolo;
 // tip: dove va la punta del poggiapiedi da reclinata (nel vuoto tra titolo e ospedale); cs: scala della poltrona
 const FIGL = W === 1920
-  ? { s: 1.6, cx: 230, neck: 1033, right: [960, 1880], colBottom: 300, logoW: 460, titW: 900, osp: 42, ospBox: [1200, 790, 640],
-      tip: [1190, 672], cs: 1.5 }
-  : { s: 1.45, cx: 170, neck: 1015, right: [700, 1420], colBottom: 300, logoW: 420, titW: 700, osp: 36, ospBox: [905, 770, 510],
-      tip: [905, 640], cs: 1.35 };
+  ? { s: 1.6, cx: 230, neck: 1033, right: [940, 1860], colBottom: 300, logoW: 460, titW: 900, osp: 42, ospTop: 780, ospW: 640,
+      tip: [1110, 655], cs: 1.6 }
+  : { s: 1.45, cx: 170, neck: 1015, right: [690, 1410], colBottom: 300, logoW: 420, titW: 700, osp: 36, ospTop: 745, ospW: 520,
+      tip: [840, 640], cs: 1.3 };
 // punta del poggiapiedi nel fotogramma reclinato della sorgente (1280x720) e piedini
 const TIP_SRC = [951, 454];
 const figEls = [], titEls = [];
@@ -350,7 +350,9 @@ function buildIntro() {
     tit.appendChild(im); titEls.push(im); });
   const osp = $('osp');
   $('intro').appendChild(osp);   // fuori dalla colonna: in basso a destra, accanto al poggiapiedi
-  Object.assign(osp.style, { position: 'absolute', fontSize: FIGL.osp + 'px', left: FIGL.ospBox[0] + 'px', top: FIGL.ospBox[1] + 'px', width: FIGL.ospBox[2] + 'px' });
+  // centrata sullo stesso asse di logo e titolo
+  const axis = (FIGL.right[0] + FIGL.right[1]) / 2;
+  Object.assign(osp.style, { position: 'absolute', fontSize: FIGL.osp + 'px', left: axis - FIGL.ospW / 2 + 'px', top: FIGL.ospTop + 'px', width: FIGL.ospW + 'px' });
   R.style.bottom = FIGL.colBottom + 'px';
 }
 
