@@ -13,8 +13,8 @@ esattamente da lì, quindi non ci sono transizioni.
 | – | `0_inizio.png` | fermo iniziale: solo lo sfondo | – |
 | 1 | `1_locandina.mp4` | la figura si compone ritaglio per ritaglio (disco, collo e viso, capelli, foglie, occhio); a destra logo, titolo con il lettering originale e "per il Reparto di Oncologia dell'Ospedale “Luigi Curto” di Polla" | 7,6 s |
 | 2 | `2_poltrona.mp4` | capelli, viso e foglie escono, davanti al disco entra la poltrona e si reclina (video Higgsfield invertito e scontornato) | 12,6 s |
-| 3 | `3_contatore.mp4` | escono poltrona e testi, il disco va nell'angolo; "Grazie a tutti voi – siamo riusciti a raccogliere…", contatore da € 0 a € 9.320 con una poltroncina sulla barra ogni 1/8 dell'importo; fuochi d'artificio sobri | 21,2 s |
-| 4 | `4_otto_poltrone.mp4` | la cifra si riduce e compaiono le 8 poltrone | 7 s |
+| 3 | `3_contatore.mp4` | escono poltrona e testi, il disco va nell'angolo; "Grazie a tutti voi – siamo riusciti a raccogliere…", contatore da € 0 a € 11.700 in 20 s con una poltroncina sulla barra ogni 1/10 dell'importo; fuochi d'artificio sobri | 30,7 s |
+| 4 | `4_poltrone.mp4` | la cifra si riduce e compaiono le 10 poltrone | 7 s |
 
 Accanto a ogni video c'è `…_fine.png`, il suo ultimo fotogramma. `anteprima_completa.mp4` mette tutto di fila
 (pause di 2 s al posto dei clic), solo per controllo.
@@ -32,7 +32,7 @@ pip install playwright rembg[cpu]                                      # serve a
 python3 tools/estrai_intro.py                                          # ritagli e titolo dal file Illustrator
 python3 tools/scontorna_fotogrammi.py <fotogrammi> <maschere>          # solo se cambia il video della poltrona
 python3 tools/prepara_video_poltrona.py assets/poltrona_higgsfield.mp4 assets/sedia_maschere build/sedia
-python3 render_segmenti.py [--formato 43] [--totale 9320]
+python3 render_segmenti.py [--formato 43] [--totale 11700] [--poltrone 10]
 ```
 
 La scena è `sequenza.html` (parti 0, 1, 3, 5, pilotate da `renderAt(t)`); `render_sequenza.py --stills` ne esporta

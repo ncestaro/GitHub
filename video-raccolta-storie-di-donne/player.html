@@ -24,7 +24,7 @@ body.idle{ cursor:none; }
 <script>
 const formato = new URLSearchParams(location.search).get('formato') === '43' ? '4_3' : '16_9';
 const dir = `export/${formato}/`;
-const PASSI = ['1_locandina', '2_poltrona', '3_contatore', '4_otto_poltrone'];
+const PASSI = ['1_locandina', '2_poltrona', '3_contatore', '4_poltrone'];
 
 const stage = document.getElementById('stage'), still = document.getElementById('still');
 still.src = dir + '0_inizio.png';

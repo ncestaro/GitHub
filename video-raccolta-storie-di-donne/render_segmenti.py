@@ -4,7 +4,7 @@
   1_locandina.mp4           la figura della locandina si compone; logo, titolo, ospedale    -> si ferma
   2_poltrona.mp4            capelli, viso e foglie escono, entra la poltrona e si reclina   -> si ferma
   3_contatore.mp4           escono poltrona e testi, ringraziamento, contatore, fuochi      -> si ferma
-  4_otto_poltrone.mp4       la cifra si riduce e compaiono le poltrone (--poltrone)         -> si ferma
+  4_poltrone.mp4            la cifra si riduce e compaiono le poltrone (--poltrone)         -> si ferma
   N_..._fine.png            ultimo fotogramma di ogni video
   anteprima_completa.mp4    tutto di fila (pause da 2 s al posto dei clic), solo per controllo
 
@@ -30,8 +30,8 @@ CHROME = "/opt/pw-browsers/chromium-1194/chrome-linux/chrome"
 SEGMENTI = {
     1: ("1_locandina", [(0, 0.0, 7.6)]),
     2: ("2_poltrona", [(0, 10.0, 12.6), (1, 0.0, 10.0)]),
-    3: ("3_contatore", [(3, 0.0, 21.2)]),
-    4: ("4_otto_poltrone", [(5, 0.0, 7.0)]),
+    3: ("3_contatore", [(3, 0.0, 30.7)]),
+    4: ("4_poltrone", [(5, 0.0, 7.0)]),
 }
 
 ap = argparse.ArgumentParser()
