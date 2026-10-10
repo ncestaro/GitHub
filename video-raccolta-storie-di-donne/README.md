@@ -33,7 +33,7 @@ pip install playwright rembg[cpu]                                      # serve a
 python3 tools/estrai_intro.py                                          # ritagli e titolo dal file Illustrator
 python3 tools/scontorna_fotogrammi.py <fotogrammi> <maschere>          # solo se cambia il video della poltrona
 python3 tools/prepara_video_poltrona.py assets/poltrona_higgsfield.mp4 assets/sedia_maschere build/sedia
-python3 render_segmenti.py [--formato 43] [--totale 11700] [--poltrone 10]
+python3 render_segmenti.py [--formato 43] [--totale 11770] [--poltrone 10]
 ```
 
 La scena è `sequenza.html` (parti 0, 1, 3, 5, pilotate da `renderAt(t)`); `render_sequenza.py --stills` ne esporta
