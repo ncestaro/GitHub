@@ -117,13 +117,13 @@ body{ font-family:'Inter',sans-serif; color:var(--char); }
 <script>
 const params = new URLSearchParams(location.search);
 const PARTE = +(params.get('parte') || 3);
-const TOTAL = +(params.get('totale') || 9320);
+const TOTAL = +(params.get('totale') || 11700);
 // formato: 16:9 (1920x1080) oppure 4:3 (1440x1080)
 const W = params.get('ar') === '43' ? 1440 : 1920, CX = W / 2;
 document.documentElement.style.setProperty('--W', W + 'px');
 document.documentElement.style.setProperty('--meterW', Math.min(1300, Math.round(W * 0.76)) + 'px');
 document.getElementById('fx').width = W;
-const N = +(params.get('poltrone') || 8);
+const N = +(params.get('poltrone') || 10);
 const CHAIR = JSON.parse(params.get('sedia') || 'null');   // {dir, frames, fps, box:[x0,y0,x1,y1], foot:[x,y], base:[x0,x1]}
 
 // tempi (secondi) di ciascuna parte
@@ -265,7 +265,7 @@ function fit() {
   const r = els.msg.getBoundingClientRect();
   els.msgDy = 540 - (r.top + r.height / 2);
   const ra = els.amount.getBoundingClientRect();
-  els.amountDy = 312 - (ra.top + ra.height / 2);   // parte 5: la cifra sale verso l'alto
+  els.amountDy = (W === 1920 ? 295 : 312) - (ra.top + ra.height / 2);   // parte 5: la cifra sale verso l'alto
   placeChair();
   buildFleet();
   buildIntro();
@@ -274,10 +274,11 @@ function fit() {
 function buildFleet() {
   if (PARTE !== 5) return;
   const ar = (CHAIR && CHAIR.drittaAR) || 0.95;   // larghezza/altezza di assets/poltrona_dritta.png
-  // fila dietro: 4 poltrone; fila davanti: 4 poltrone sfalsate di mezza posizione
-  // griglia 4 x 2, centrata, poltrone "a sedia"
-  const step = W === 1920 ? 450 : 345, cx = [0, 1, 2, 3].map(i => CX + (i - 1.5) * step);
-  const rows = [ { h: 300, bottom: 692, cx }, { h: 300, bottom: 985, cx } ];
+  // N poltrone "a sedia" su due file centrate (10 -> 5 + 5)
+  const h = W === 1920 ? 285 : 250, w0 = h * ar, cols = Math.ceil(N / 2);
+  const step = Math.min(450, (W - 140 - w0) / Math.max(1, cols - 1));
+  const rowCx = n => Array.from({ length: n }, (_, i) => CX + (i - (n - 1) / 2) * step);
+  const rows = [ { h, bottom: W === 1920 ? 700 : 692, cx: rowCx(cols) }, { h, bottom: W === 1920 ? 985 : 975, cx: rowCx(N - cols) } ];
   let k = 0;
   for (const r of rows) for (const cx of r.cx) {
     const im = new Image(); im.src = 'assets/poltrona_dritta.png';

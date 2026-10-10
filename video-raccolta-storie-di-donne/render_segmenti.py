@@ -4,14 +4,14 @@
   1_locandina.mp4           la figura della locandina si compone; logo, titolo, ospedale    -> si ferma
   2_poltrona.mp4            capelli, viso e foglie escono, entra la poltrona e si reclina   -> si ferma
   3_contatore.mp4           escono poltrona e testi, ringraziamento, contatore, fuochi      -> si ferma
-  4_otto_poltrone.mp4       la cifra si riduce e compaiono le 8 poltrone                    -> si ferma
+  4_otto_poltrone.mp4       la cifra si riduce e compaiono le poltrone (--poltrone)         -> si ferma
   N_..._fine.png            ultimo fotogramma di ogni video
   anteprima_completa.mp4    tutto di fila (pause da 2 s al posto dei clic), solo per controllo
 
 Ogni video inizia esattamente sull'ultimo fotogramma del precedente: nessuna transizione.
 Uscita in export/16_9/ (1920x1080) o export/4_3/ (1440x1080), 30 fps.
 Prima: tools/prepara_video_poltrona.py deve aver creato build/sedia/.
-Uso: python3 render_segmenti.py [--formato 169|43] [--solo 1234] [--totale 9320]
+Uso: python3 render_segmenti.py [--formato 169|43] [--solo 1234] [--totale 11700] [--poltrone 10]
 """
 import argparse
 import json
@@ -38,7 +38,8 @@ ap = argparse.ArgumentParser()
 ap.add_argument("--formato", default="169", choices=["169", "43"])
 ap.add_argument("--solo", default="1234", help="quali segmenti esportare")
 ap.add_argument("--fps", type=int, default=30)
-ap.add_argument("--totale", type=int, default=9320)
+ap.add_argument("--totale", type=int, default=11700)
+ap.add_argument("--poltrone", type=int, default=10)
 ap.add_argument("--pausa", type=float, default=2.0, help="pausa al posto del clic nell'anteprima completa")
 args = ap.parse_args()
 
@@ -62,7 +63,7 @@ with sync_playwright() as p:
     def page(parte):
         if parte not in pages:
             pg = b.new_page(viewport={"width": W, "height": 1080})
-            q = f"?parte={parte}&ar={args.formato}&totale={args.totale}&sedia={quote(json.dumps(meta))}"
+            q = f"?parte={parte}&ar={args.formato}&totale={args.totale}&poltrone={args.poltrone}&sedia={quote(json.dumps(meta))}"
             pg.goto((here / "sequenza.html").resolve().as_uri() + q)
             pg.evaluate("window.ready")
             pages[parte] = pg
