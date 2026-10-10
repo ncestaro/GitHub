@@ -1,54 +1,40 @@
 # Raccolta fondi – "Storie di donne straordinariamente semplici"
 
-Materiali per lo schermo del teatro (16:9, 1920 × 1080, 30 fps, senza audio) con la grafica di
-locandina e brochure.
+Materiali per lo schermo del teatro, con la grafica della locandina (file Illustrator in `assets/intro/`).
+Due formati: **16:9** (1920 × 1080) in `export/16_9/` e **4:3** (1440 × 1080) in `export/4_3/`; 30 fps, senza audio.
 
-## Sequenza con la poltrona (`sequenza.html`, `render_sequenza.py`)
+## Come funziona in sala
 
-| file | cosa | durata |
-|---|---|---|
-| `export/0_apertura.mp4` | la figura della locandina (grande, tagliata dal bordo sinistro) si compone ritaglio per ritaglio dal file Illustrator; a destra logo, titolo con il lettering originale e "per il Reparto di Oncologia dell'Ospedale “Luigi Curto” di Polla"; poi capelli, viso e foglie escono e al loro posto, davanti al disco, compare la poltrona | 12,6 s |
-| `export/1_poltrona.mp4` | la poltrona si reclina (video Higgsfield invertito, scontornato) a sinistra davanti al disco, con logo, titolo e ospedale a destra | 10 s |
-| `export/2_fermo_poltrona.png` | fermo immagine: ultimo fotogramma di 1 | – |
-| `export/3_contatore.mp4` | poltrona e colonna di destra escono, il disco scivola nell'angolo, "Grazie a tutti voi – siamo riusciti a raccogliere…", contatore da € 0 a € 9.320 in 10,5 s; sulla barra compare una poltroncina ogni 1/8 dell'importo (≈ 1.165 €); a fine conteggio fuochi d'artificio sobri | 21,2 s |
-| `export/4_fermo_importo.png` | fermo immagine: ultimo fotogramma di 3 | – |
-| `export/5_poltrone.mp4` | la cifra si riduce e sale, compaiono le 8 poltrone grandi "a sedia" (griglia 4 × 2) | 7 s |
-| `export/6_fermo_poltrone.png` | fermo immagine: ultimo fotogramma di 5 | – |
-| `export/sequenza_completa.mp4` | tutte le parti di fila (fermi da 3 s), per anteprima | – |
+Ogni passo parte con un clic e si ferma da solo sull'ultimo fotogramma; il passo successivo riparte
+esattamente da lì, quindi non ci sono transizioni.
 
-La stessa serie in **4:3** (1440 × 1080) è in `export/4_3/`.
+| clic | file | cosa succede | durata |
+|---|---|---|---|
+| – | `0_inizio.png` | fermo iniziale: solo lo sfondo | – |
+| 1 | `1_locandina.mp4` | la figura si compone ritaglio per ritaglio (disco, collo e viso, capelli, foglie, occhio); a destra logo, titolo con il lettering originale e "per il Reparto di Oncologia dell'Ospedale “Luigi Curto” di Polla" | 7,6 s |
+| 2 | `2_poltrona.mp4` | capelli, viso e foglie escono, davanti al disco entra la poltrona e si reclina (video Higgsfield invertito e scontornato) | 12,6 s |
+| 3 | `3_contatore.mp4` | escono poltrona e testi, il disco va nell'angolo; "Grazie a tutti voi – siamo riusciti a raccogliere…", contatore da € 0 a € 9.320 con una poltroncina sulla barra ogni 1/8 dell'importo; fuochi d'artificio sobri | 21,2 s |
+| 4 | `4_otto_poltrone.mp4` | la cifra si riduce e compaiono le 8 poltrone | 7 s |
 
-### PowerPoint
+Accanto a ogni video c'è `…_fine.png`, il suo ultimo fotogramma. `anteprima_completa.mp4` mette tutto di fila
+(pause di 2 s al posto dei clic), solo per controllo.
 
-(Da aggiornare: non contiene ancora l'apertura.)
+### Player
 
-`export/Raccolta_9320_16-9.pptx` e `export/4_3/Raccolta_9320_4-3.pptx` (creati con `tools/crea_pptx.py [--formato 43]`):
+`player.html` (16:9) oppure `player.html?formato=43` (4:3), aperto in Chrome/Edge dalla cartella del progetto:
+**F** schermo intero; **clic, spazio, → o PagGiù** (anche da telecomando) passo successivo; **← o PagSu** torna al
+fermo precedente. Durante un video i clic sono ignorati.
 
-1. video poltrona – parte da solo e a fine video passa da solo alla slide 2
-2. fermo poltrona – aspetta il clic
-3. video contatore – parte da solo e a fine video passa da solo alla slide 4
-4. fermo importo – aspetta il clic
-5. video 8 poltrone – parte da solo e a fine video passa da solo alla slide 6
-6. fermo 8 poltrone – fine
-
-Nessuna transizione tra le slide (taglio netto): ogni fermo è identico all'ultimo fotogramma del video che lo precede,
-quindi il passaggio non si vede.
-
-Ogni parte inizia esattamente dove finisce la precedente, quindi si possono montare o lanciare una dopo l'altra.
-
-Per rigenerare:
+## Rigenerare
 
 ```
-pip install playwright rembg[cpu]        # richiede anche ffmpeg
-python3 tools/estrai_intro.py                     # ritagli e titolo da assets/intro/progetto_illustrator.svgz
-python3 tools/scontorna_fotogrammi.py <fotogrammi> <maschere>          # ~8 s a fotogramma su CPU
-python3 tools/prepara_video_poltrona.py <video.mp4> <maschere> build/sedia   # anche assets/poltrona_dritta.png e l'icona
-python3 render_sequenza.py --totale 9320 [--formato 43]
-python3 tools/crea_pptx.py [--formato 43]
+pip install playwright rembg[cpu]                                      # serve anche ffmpeg
+python3 tools/estrai_intro.py                                          # ritagli e titolo dal file Illustrator
+python3 tools/scontorna_fotogrammi.py <fotogrammi> <maschere>          # solo se cambia il video della poltrona
+python3 tools/prepara_video_poltrona.py assets/poltrona_higgsfield.mp4 assets/sedia_maschere build/sedia
+python3 render_segmenti.py [--formato 43] [--totale 9320]
 ```
 
-Le maschere già calcolate per il video sono in `assets/sedia_maschere/`.
-
-## Solo contatore (`counter.html`, `render.py`)
-
-Versione precedente senza poltrone: `export/raccolta_9320_orizzontale_1920x1080.mp4` (15 s).
+La scena è `sequenza.html` (parti 0, 1, 3, 5, pilotate da `renderAt(t)`); `render_sequenza.py --stills` ne esporta
+anteprime. Le maschere della poltrona sono già calcolate in `assets/sedia_maschere/`.
+`tools/crea_pptx.py` riguarda la vecchia versione PowerPoint (non aggiornata).

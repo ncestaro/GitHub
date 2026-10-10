@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<title>Storie di donne – raccolta fondi</title>
+<style>
+/*
+  Player a clic per il teatro.
+  Apri player.html (16:9) oppure player.html?formato=43 (4:3) nel browser, poi F per lo schermo intero.
+  Clic, spazio, freccia destra o PagGiù (telecomando): parte il video successivo, che si ferma da solo sull'ultimo fotogramma.
+  Freccia sinistra o PagSu: torna al fermo precedente. Durante un video i clic sono ignorati.
+*/
+html,body{ margin:0; height:100%; background:#000; overflow:hidden; }
+.stage{ position:fixed; inset:0; display:flex; align-items:center; justify-content:center; }
+.stage > *{ position:absolute; max-width:100%; max-height:100%; width:100%; height:100%; object-fit:contain; opacity:0; }
+.stage > .on{ opacity:1; }
+body.idle{ cursor:none; }
+</style>
+</head>
+<body>
+<div class="stage" id="stage">
+  <img id="still" class="on" alt="">
+</div>
+<script>
+const formato = new URLSearchParams(location.search).get('formato') === '43' ? '4_3' : '16_9';
+const dir = `export/${formato}/`;
+const PASSI = ['1_locandina', '2_poltrona', '3_contatore', '4_otto_poltrone'];
+
+const stage = document.getElementById('stage'), still = document.getElementById('still');
+still.src = dir + '0_inizio.png';
+// un video per passo, caricati subito
+const videos = PASSI.map(n => {
+  const v = document.createElement('video');
+  v.src = dir + n + '.mp4'; v.preload = 'auto'; v.muted = true; v.playsInline = true;
+  stage.appendChild(v);
+  v.addEventListener('ended', () => { playing = false; });
+  return v;
+});
+
+let step = 0, playing = false;   // step = quanti video sono già stati mostrati
+function show(el) { [still, ...videos].forEach(e => e.classList.toggle('on', e === el)); }
+
+function next() {
+  if (playing || step >= PASSI.length) return;
+  const v = videos[step++];
+  v.currentTime = 0;
+  playing = true;
+  // si mostra il video solo quando è partito: nessun lampo tra un passo e l'altro
+  v.addEventListener('playing', () => show(v), { once: true });
+  v.play().catch(() => { playing = false; step--; });   // se il video non parte, si resta sul passo attuale
+}
+function prev() {
+  if (step === 0) return;
+  videos[step - 1].pause();
+  playing = false;
+  step--;
+  still.src = dir + (step === 0 ? '0_inizio.png' : PASSI[step - 1] + '_fine.png');
+  show(still);
+}
+function fullscreen() {
+  if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen();
+}
+
+document.addEventListener('click', next);
+document.addEventListener('keydown', e => {
+  if ([' ', 'ArrowRight', 'PageDown', 'Enter'].includes(e.key)) { e.preventDefault(); next(); }
+  else if (['ArrowLeft', 'PageUp', 'Backspace'].includes(e.key)) { e.preventDefault(); prev(); }
+  else if (e.key === 'f' || e.key === 'F') fullscreen();
+});
+// cursore nascosto quando il mouse è fermo
+let idle;
+document.addEventListener('mousemove', () => {
+  document.body.classList.remove('idle'); clearTimeout(idle);
+  idle = setTimeout(() => document.body.classList.add('idle'), 1500);
+});
+</script>
+</body>
+</html>
