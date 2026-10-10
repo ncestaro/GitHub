@@ -5,7 +5,9 @@
   3_contatore.mp4       la poltrona sparisce, ringraziamento, contatore con 8 poltroncine, fuochi
   4_fermo_importo.png   ultimo fotogramma della parte 3
   5_poltrone.mp4        la cifra si riduce e compaiono le 8 poltrone grandi
-  sequenza_completa.mp4 le cinque parti di fila (fermi immagine da 3 s), solo per anteprima
+  6_fermo_poltrone.png  ultimo fotogramma della parte 5
+  sequenza_completa.mp4 tutte le parti di fila (fermi immagine da 3 s), solo per anteprima
+Con --formato 43 la versione 4:3 (1440x1080) va in export/4_3/.
 
 Prima: tools/prepara_video_poltrona.py deve aver creato build/sedia/ (fotogrammi + meta.json).
 Uso: python3 render_sequenza.py [--parti 135] [--stills] [--totale 9320]
@@ -24,16 +26,21 @@ out = here / "export"
 out.mkdir(exist_ok=True)
 CHROME = "/opt/pw-browsers/chromium-1194/chrome-linux/chrome"
 NAMES = {1: "1_poltrona", 3: "3_contatore", 5: "5_poltrone"}
-STILLS = {1: "2_fermo_poltrona.png", 3: "4_fermo_importo.png"}
+STILLS = {1: "2_fermo_poltrona.png", 3: "4_fermo_importo.png", 5: "6_fermo_poltrone.png"}
 
 ap = argparse.ArgumentParser()
 ap.add_argument("--fps", type=int, default=30)
 ap.add_argument("--totale", type=int, default=9320)
 ap.add_argument("--parti", default="135")
 ap.add_argument("--stills", action="store_true", help="solo anteprime PNG")
+ap.add_argument("--formato", default="169", choices=["169", "43"], help="16:9 (1920x1080) o 4:3 (1440x1080, in export/4_3)")
 ap.add_argument("--fermo", type=float, default=3.0, help="durata dei fermi immagine nella sequenza completa")
 args = ap.parse_args()
 
+W = 1920 if args.formato == "169" else 1440
+if args.formato == "43":
+    out = out / "4_3"
+    out.mkdir(exist_ok=True)
 meta = json.loads((here / "build/sedia/meta.json").read_text())
 meta["dir"] = "build/sedia"
 
@@ -47,8 +54,8 @@ def mp4(frames_glob, dst, fps):
 with sync_playwright() as p:
     b = p.chromium.launch(executable_path=CHROME if pathlib.Path(CHROME).exists() else None)
     for parte in map(int, args.parti):
-        pg = b.new_page(viewport={"width": 1920, "height": 1080})
-        q = f"?parte={parte}&totale={args.totale}&sedia={quote(json.dumps(meta))}"
+        pg = b.new_page(viewport={"width": W, "height": 1080})
+        q = f"?parte={parte}&ar={args.formato}&totale={args.totale}&sedia={quote(json.dumps(meta))}"
         pg.goto((here / "sequenza.html").resolve().as_uri() + q)
         T = pg.evaluate("window.ready")
         if args.stills:
@@ -72,13 +79,14 @@ with sync_playwright() as p:
 
 if not args.stills and all((out / f"{n}.mp4").exists() for n in NAMES.values()):
     with tempfile.TemporaryDirectory() as tmp:
-        parts = [out / "1_poltrona.mp4"]
-        for i, s in enumerate(STILLS.values()):
-            still = pathlib.Path(tmp) / f"fermo{i}.mp4"
+        parts = []
+        for parte, name in NAMES.items():
+            # ogni video seguito dal suo fermo immagine
+            still = pathlib.Path(tmp) / f"fermo{parte}.mp4"
             subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-loop", "1", "-framerate", str(args.fps),
-                            "-i", str(out / s), "-t", str(args.fermo), "-c:v", "libx264", "-crf", "16",
+                            "-i", str(out / STILLS[parte]), "-t", str(args.fermo), "-c:v", "libx264", "-crf", "16",
                             "-pix_fmt", "yuv420p", str(still)], check=True)
-            parts += [still, out / ("3_contatore.mp4" if i == 0 else "5_poltrone.mp4")]
+            parts += [out / f"{name}.mp4", still]
         lst = pathlib.Path(tmp) / "lista.txt"
         lst.write_text("".join(f"file '{x.resolve()}'\n" for x in parts))
         subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-f", "concat", "-safe", "0", "-i", str(lst),

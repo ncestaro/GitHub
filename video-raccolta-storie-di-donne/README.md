@@ -12,7 +12,24 @@ locandina e brochure.
 | `export/3_contatore.mp4` | la poltrona sparisce, "Grazie a tutti voi – siamo riusciti a raccogliere…", contatore da € 0 a € 9.320 in 10,5 s; sulla barra compare una poltroncina ogni 1/8 dell'importo (≈ 1.165 €); a fine conteggio fuochi d'artificio sobri | 20,5 s |
 | `export/4_fermo_importo.png` | fermo immagine: ultimo fotogramma di 3 | – |
 | `export/5_poltrone.mp4` | la cifra si riduce e sale, compaiono le 8 poltrone grandi "a sedia" (griglia 4 × 2) | 7 s |
-| `export/sequenza_completa.mp4` | le cinque parti di fila (fermi da 3 s), per anteprima | – |
+| `export/6_fermo_poltrone.png` | fermo immagine: ultimo fotogramma di 5 | – |
+| `export/sequenza_completa.mp4` | tutte le parti di fila (fermi da 3 s), per anteprima | – |
+
+La stessa serie in **4:3** (1440 × 1080) è in `export/4_3/`.
+
+### PowerPoint
+
+`export/Raccolta_9320_16-9.pptx` e `export/4_3/Raccolta_9320_4-3.pptx` (creati con `tools/crea_pptx.py [--formato 43]`):
+
+1. video poltrona – parte da solo e a fine video passa da solo alla slide 2
+2. fermo poltrona – aspetta il clic
+3. video contatore – parte da solo e a fine video passa da solo alla slide 4
+4. fermo importo – aspetta il clic
+5. video 8 poltrone – parte da solo e a fine video passa da solo alla slide 6
+6. fermo 8 poltrone – fine
+
+Nessuna transizione tra le slide (taglio netto): ogni fermo è identico all'ultimo fotogramma del video che lo precede,
+quindi il passaggio non si vede.
 
 Ogni parte inizia esattamente dove finisce la precedente, quindi si possono montare o lanciare una dopo l'altra.
 
@@ -22,7 +39,8 @@ Per rigenerare:
 pip install playwright rembg[cpu]        # richiede anche ffmpeg
 python3 tools/scontorna_fotogrammi.py <fotogrammi> <maschere>          # ~8 s a fotogramma su CPU
 python3 tools/prepara_video_poltrona.py <video.mp4> <maschere> build/sedia   # anche assets/poltrona_dritta.png e l'icona
-python3 render_sequenza.py --totale 9320
+python3 render_sequenza.py --totale 9320 [--formato 43]
+python3 tools/crea_pptx.py [--formato 43]
 ```
 
 Le maschere già calcolate per il video sono in `assets/sedia_maschere/`.
