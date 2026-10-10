@@ -7,10 +7,10 @@ locandina e brochure.
 
 | file | cosa | durata |
 |---|---|---|
-| `export/0_apertura.mp4` | la figura della locandina si compone ritaglio per ritaglio (vettoriale, dal file Illustrator), logo, titolo con il lettering originale, "per il Reparto di Oncologia dell'Ospedale “Luigi Curto” di Polla"; poi il disco diventa quello dell'angolo e compare la poltrona | 13 s |
-| `export/1_poltrona.mp4` | la poltrona si reclina (video Higgsfield invertito, scontornato) sullo sfondo dell'evento | 10 s |
+| `export/0_apertura.mp4` | la figura della locandina (grande, tagliata dal bordo sinistro) si compone ritaglio per ritaglio dal file Illustrator; a destra logo, titolo con il lettering originale e "per il Reparto di Oncologia dell'Ospedale “Luigi Curto” di Polla"; poi capelli, viso e foglie escono e al loro posto, davanti al disco, compare la poltrona | 12,6 s |
+| `export/1_poltrona.mp4` | la poltrona si reclina (video Higgsfield invertito, scontornato) a sinistra davanti al disco, con logo, titolo e ospedale a destra | 10 s |
 | `export/2_fermo_poltrona.png` | fermo immagine: ultimo fotogramma di 1 | – |
-| `export/3_contatore.mp4` | la poltrona sparisce, "Grazie a tutti voi – siamo riusciti a raccogliere…", contatore da € 0 a € 9.320 in 10,5 s; sulla barra compare una poltroncina ogni 1/8 dell'importo (≈ 1.165 €); a fine conteggio fuochi d'artificio sobri | 20,5 s |
+| `export/3_contatore.mp4` | poltrona e colonna di destra escono, il disco scivola nell'angolo, "Grazie a tutti voi – siamo riusciti a raccogliere…", contatore da € 0 a € 9.320 in 10,5 s; sulla barra compare una poltroncina ogni 1/8 dell'importo (≈ 1.165 €); a fine conteggio fuochi d'artificio sobri | 21,2 s |
 | `export/4_fermo_importo.png` | fermo immagine: ultimo fotogramma di 3 | – |
 | `export/5_poltrone.mp4` | la cifra si riduce e sale, compaiono le 8 poltrone grandi "a sedia" (griglia 4 × 2) | 7 s |
 | `export/6_fermo_poltrone.png` | fermo immagine: ultimo fotogramma di 5 | – |
