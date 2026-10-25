@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chat Damigelle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --page:#e8e2d9;
+  --wa-green:#1DAA61;
+  --wa-bg:#EFEAE2;
+  --ink:#111B21;
+  --muted:#667781;
+  --icon:#54656F;
+  --out:#D9FDD3;
+  --tick:#53BDEB;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --page:#1b1d1f; } }
+:root[data-theme="dark"]{ --page:#1b1d1f; }
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:var(--page);overflow:hidden;font-family:Roboto,"Segoe UI",Inter,"Helvetica Neue",Arial,sans-serif,"Noto Color Emoji","Apple Color Emoji","Segoe UI Emoji";-webkit-font-smoothing:antialiased}
+#wrap{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+#stage{position:relative;width:405px;height:720px;flex:none;overflow:hidden;background:var(--wa-bg);border-radius:22px;box-shadow:0 20px 60px rgba(0,0,0,.25);transform-origin:center center}
+body.rec #wrap{align-items:flex-start;justify-content:flex-start}
+body.rec #stage{border-radius:0;box-shadow:none}
+
+/* status bar */
+.sb{position:absolute;left:0;right:0;top:0;height:30px;background:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 18px 0 22px;font-size:14px;font-weight:500;color:var(--ink);z-index:5}
+.sb .ic{display:flex;gap:6px;align-items:center}
+.sb svg{display:block}
+
+/* header */
+.hd{position:absolute;left:0;right:0;top:30px;height:58px;background:#fff;display:flex;align-items:center;padding:0 6px 0 4px;z-index:5;border-bottom:1px solid rgba(0,0,0,.06)}
+.hd .back{width:34px;height:40px;display:flex;align-items:center;justify-content:center}
+.gav{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#ffe3ea,#f7c6d3);display:flex;align-items:center;justify-content:center;font-size:22px;margin-right:10px;flex:none}
+.hd .ti{flex:1;min-width:0}
+.hd .nm{font-size:17px;font-weight:500;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hd .st{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+.hd .st.writing{color:var(--wa-green)}
+.hd .acts{display:flex;align-items:center;gap:16px;padding-right:6px}
+
+/* chat */
+.chat{position:absolute;left:0;right:0;top:88px;bottom:68px;overflow:hidden;
+  background-color:var(--wa-bg);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cg fill='none' stroke='%23000' stroke-opacity='.055' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M22 30c-4-6-14-2-10 6l10 10 10-10c4-8-6-12-10-6z'/%3E%3Ccircle cx='100' cy='24' r='9'/%3E%3Cpath d='M96 24h8M100 20v8'/%3E%3Cpath d='M60 64l3 7 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z'/%3E%3Crect x='104' y='70' width='22' height='16' rx='4'/%3E%3Cpath d='M108 86l-2 6 7-6'/%3E%3Cpath d='M18 96c6-8 16-8 22 0M22 104c4-4 10-4 14 0'/%3E%3Cpath d='M76 112c0-8 12-8 12 0s-12 8-12 0zM82 104v-6'/%3E%3Cpath d='M118 120l8-8M126 120l-8-8'/%3E%3Cpath d='M48 12c3 4 9 4 12 0'/%3E%3Ccircle cx='44' cy='128' r='4'/%3E%3C/g%3E%3C/svg%3E");}
+.content{position:absolute;left:0;right:0;top:0;padding:10px 10px 0;will-change:transform}
+.day{display:flex;justify-content:center;margin:2px 0 10px}
+.day span{background:#fff;color:#54656F;font-size:12.5px;padding:5px 12px;border-radius:8px;box-shadow:0 1px .5px rgba(11,20,26,.13)}
+
+.row{display:flex;align-items:flex-end;margin-top:8px;visibility:hidden}
+.row.in{justify-content:flex-start}
+.row.out{justify-content:flex-end}
+.av{width:28px;height:28px;border-radius:50%;flex:none;margin-right:6px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:500}
+.bub{position:relative;max-width:76%;padding:6px 8px 7px 9px;border-radius:9px;box-shadow:0 1px .5px rgba(11,20,26,.13);font-size:15.5px;line-height:1.32;color:var(--ink);word-wrap:break-word}
+.in .bub{background:#fff;border-top-left-radius:0;margin-left:8px}
+.out .bub{background:var(--out);border-top-right-radius:0;margin-right:8px}
+.in .av + .bub{margin-left:8px}
+.bub:before{content:"";position:absolute;top:0;width:8px;height:12px}
+.in .bub:before{left:-8px;background:#fff;clip-path:polygon(0 0,100% 0,100% 100%)}
+.out .bub:before{right:-8px;background:var(--out);clip-path:polygon(0 0,100% 0,0 100%)}
+.name{font-size:13px;font-weight:500;margin-bottom:1px}
+.sp{display:inline-block;width:44px;height:1px}
+.out .sp{width:64px}
+.meta{position:absolute;right:8px;bottom:4px;font-size:11px;color:var(--muted);display:flex;align-items:center;gap:3px;line-height:1}
+.tk{display:block}
+.bub.ph{padding:3px 3px 7px}
+.bub.ph img{display:block;width:250px;height:332px;object-fit:cover;border-radius:7px}
+.bub.ph .cap{padding:5px 6px 0 6px}
+b{font-weight:700}
+
+.typing{position:absolute;left:10px;display:flex;align-items:flex-end;opacity:0}
+.typing .bub{padding:11px 13px;display:flex;gap:4px;align-items:center;height:36px}
+.typing .bub i{width:7px;height:7px;border-radius:50%;background:#8696A0;display:block}
+
+/* input bar */
+.ib{position:absolute;left:0;right:0;bottom:0;height:68px;padding:6px 6px 18px;display:flex;align-items:center;gap:6px;background:transparent;z-index:5}
+.pill{flex:1;min-width:0;height:44px;background:#fff;border-radius:24px;display:flex;align-items:center;padding:0 10px 0 12px;gap:10px;box-shadow:0 1px .5px rgba(11,20,26,.1)}
+.pill .tx{flex:1;min-width:0;overflow:hidden;white-space:nowrap;font-size:16px;color:var(--ink);position:relative;height:22px;line-height:22px}
+.pill .tx .ph{color:#8696A0}
+.pill .tx .val{position:absolute;left:0;top:0;white-space:pre}
+.car{display:inline-block;width:1.5px;height:19px;background:var(--wa-green);vertical-align:-3px;margin-left:1px}
+.mic{width:46px;height:46px;border-radius:50%;background:var(--wa-green);display:flex;align-items:center;justify-content:center;flex:none;box-shadow:0 1px 2px rgba(0,0,0,.15)}
+.hbar{position:absolute;left:50%;bottom:6px;width:120px;height:4px;margin-left:-60px;border-radius:2px;background:#111;opacity:.75;z-index:6}
+
+/* overlays */
+.ov{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.35);z-index:20;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.ov .card{background:#fff;border-radius:18px;padding:22px 26px;text-align:center;box-shadow:0 10px 40px rgba(0,0,0,.25);max-width:280px}
+.ov .play{width:64px;height:64px;border-radius:50%;background:var(--wa-green);display:flex;align-items:center;justify-content:center;margin:0 auto 12px}
+.ov h1{font-size:17px;font-weight:500;color:var(--ink)}
+.ov p{font-size:13.5px;color:var(--muted);margin-top:4px}
+.again{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:#fff;color:var(--ink);border:0;border-radius:22px;padding:10px 18px;font:500 14px Roboto,Inter,Arial,sans-serif;box-shadow:0 4px 16px rgba(0,0,0,.2);cursor:pointer;z-index:20;display:none}
+body.rec .ov, body.rec .again{display:none!important}
+</style>
+</head>
+<body>
+<div id="wrap"><div id="stage">
+  <div class="sb">
+    <span id="clock">16:42</span>
+    <span class="ic">
+      <svg width="16" height="12" viewBox="0 0 16 12"><path d="M8 11.5L.5 3.6C2.6 1.7 5.2.6 8 .6s5.4 1.1 7.5 3z" fill="#111B21"/></svg>
+      <svg width="15" height="12" viewBox="0 0 15 12"><path d="M14 0v12H.5z" fill="#111B21"/></svg>
+      <svg width="22" height="12" viewBox="0 0 22 12"><rect x=".7" y=".7" width="18" height="10.6" rx="2.4" fill="none" stroke="#111B21" stroke-width="1.2"/><rect x="2.4" y="2.4" width="12.5" height="7.2" rx="1.2" fill="#111B21"/><rect x="19.8" y="4" width="1.6" height="4" rx=".8" fill="#111B21"/></svg>
+    </span>
+  </div>
+  <div class="hd">
+    <div class="back"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" fill="#111B21"/></svg></div>
+    <div class="gav">👰‍♀️</div>
+    <div class="ti">
+      <div class="nm">Damigelle 💍✨</div>
+      <div class="st" id="status">Chiara, Federica, Martina, Sara, Tu</div>
+    </div>
+    <div class="acts">
+      <svg width="24" height="24" viewBox="0 0 24 24"><rect x="2.5" y="6" width="13" height="12" rx="2.5" fill="none" stroke="#111B21" stroke-width="1.8"/><path d="M15.5 10.5l5-3v9l-5-3z" fill="none" stroke="#111B21" stroke-width="1.8" stroke-linejoin="round"/></svg>
+      <svg width="22" height="22" viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z" fill="none" stroke="#111B21" stroke-width="1.7" stroke-linejoin="round"/></svg>
+      <svg width="20" height="20" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2" fill="#111B21"/><circle cx="12" cy="12" r="2" fill="#111B21"/><circle cx="12" cy="19" r="2" fill="#111B21"/></svg>
+    </div>
+  </div>
+  <div class="chat" id="chat"><div class="content" id="content">
+    <div class="day" id="day"><span>Oggi</span></div>
+    <div class="typing" id="typing"><div class="av" id="tav"></div><div class="bub"><i></i><i></i><i></i></div></div>
+  </div></div>
+  <div class="ib">
+    <div class="pill">
+      <svg width="24" height="24" viewBox="0 0 24 24" style="flex:none"><circle cx="12" cy="12" r="9" fill="none" stroke="#54656F" stroke-width="1.7"/><circle cx="9" cy="10" r="1.2" fill="#54656F"/><circle cx="15" cy="10" r="1.2" fill="#54656F"/><path d="M8 14c1.8 2.4 6.2 2.4 8 0" fill="none" stroke="#54656F" stroke-width="1.7" stroke-linecap="round"/></svg>
+      <div class="tx" id="tx"><span class="ph" id="ph">Messaggio</span><span class="val" id="val"></span></div>
+      <svg width="22" height="22" viewBox="0 0 24 24" style="flex:none;transform:rotate(-45deg)"><path d="M16.5 6v11.5a4 4 0 0 1-8 0V5a2.5 2.5 0 0 1 5 0v10.5a1 1 0 0 1-2 0V6" fill="none" stroke="#54656F" stroke-width="1.6" stroke-linecap="round"/></svg>
+      <svg id="cam" width="23" height="23" viewBox="0 0 24 24" style="flex:none"><path d="M4 8h3l1.6-2.2h6.8L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z" fill="none" stroke="#54656F" stroke-width="1.7" stroke-linejoin="round"/><circle cx="12" cy="13" r="3.4" fill="none" stroke="#54656F" stroke-width="1.7"/></svg>
+    </div>
+    <div class="mic" id="mic">
+      <svg id="micI" width="24" height="24" viewBox="0 0 24 24"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5.3-3c0 3-2.5 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.4 2.7 6.2 6 6.7V21h2v-3.3c3.3-.5 6-3.3 6-6.7z" fill="#fff"/></svg>
+      <svg id="sendI" width="22" height="22" viewBox="0 0 24 24" style="display:none;margin-left:3px"><path d="M2 21l21-9L2 3v7l15 2-15 2z" fill="#fff"/></svg>
+    </div>
+  </div>
+  <div class="hbar"></div>
+</div></div>
+
+<div class="ov" id="start"><div class="card">
+  <div class="play"><svg width="28" height="28" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="#fff"/></svg></div>
+  <h1>Tocca per avviare</h1>
+  <p>Alza il volume 🔊</p>
+</div></div>
+<button class="again" id="again">↻ Rivedi</button>
+
+<script>
+const IMG = "__IMG__";
+const ME = "me";
+const PEOPLE = {
+  Martina:  {c:"#D3396D", bg:"#E9A1BD"},
+  Chiara:   {c:"#7F66FF", bg:"#B3A6FF"},
+  Federica: {c:"#C4610F", bg:"#F0B27A"},
+  Sara:     {c:"#1A8F4A", bg:"#8FD3A6"}
+};
+// *testo* = grassetto, come su WhatsApp
+const D = [
+  {from:ME, img:true, time:"16:42", text:"Ragazzeee guardate chi c'è qui con me 😍😍\nSta provando QUESTO 👀"},
+  {from:"Martina",  time:"16:43", text:"OMMIODDIO 😭😭😭\nSaraaa sei una principessa 👑"},
+  {from:"Chiara",   time:"16:43", text:"Ma stai benissimooo 😍\nTi sta da DIO, sembra cucito addosso ✨"},
+  {from:"Federica", time:"16:44", text:"Mi sto commuovendo in ufficio 🥹❤️\nÈ lui, me lo sento!!"},
+  {from:"Martina",  time:"16:44", text:"Ok ma… quanto costa? 👀💸"},
+  {from:"Chiara",   time:"16:45", text:"Eh sì, dicci la cifra 😅", gap:.35, typ:1.0},
+  {from:"Sara",     time:"16:46", text:"Ragazze tenetevi forte…\nSolo *990 euro* 😱", typ:2.2},
+  {from:"Federica", time:"16:46", text:"COSAAA?! 990?? 😳", gap:.3, typ:.8},
+  {from:"Martina",  time:"16:46", text:"PRENDILO. SUBITO. 🏃‍♀️💨", gap:.2, typ:.8},
+  {from:"Chiara",   time:"16:47", text:"Non uscire da lì senza quel vestito 🙅‍♀️😂", gap:.25, typ:1.1},
+  {from:"Federica", time:"16:47", text:"Prendiloooo ❤️❤️❤️", gap:.2, typ:.7},
+  {from:ME,         time:"16:47", text:"Gliel'ho detto anch'io!! 🙌", gap:.5},
+  {from:"Chiara",   time:"16:48", text:"Ma dove siete?? Voglio andarci anch'io 😍"},
+  {from:ME,         time:"16:48", text:"Da *Luisi Spose*, a *Sala Consilina* 📍✨", gap:.6}
+];
+
+const KEY_DT = 0.06, POP = 0.28, SCROLL = 0.32, TAIL = 3.5;
+const seg = new Intl.Segmenter("it", {granularity:"grapheme"});
+const graphemes = s => Array.from(seg.segment(s), x => x.segment);
+const plain = s => s.replace(/\*/g, "");
+const esc = s => s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+const fmt = s => esc(s).replace(/\*(.+?)\*/g, "<b>$1</b>").replace(/\n/g, "<br>");
+const clamp = (x,a=0,b=1) => Math.max(a, Math.min(b, x));
+const easeOut = p => 1 - Math.pow(1 - p, 3);
+const easeBack = p => { const c = 1.6; return 1 + (c + 1) * Math.pow(p - 1, 3) + c * Math.pow(p - 1, 2); };
+const $ = id => document.getElementById(id);
+
+const TICKS = c => `<svg class="tk" width="16" height="11" viewBox="0 0 16 11"><path d="M1 5.8l2.9 2.9L10.2 2" fill="none" stroke="${c}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M6.2 8.7l.4.4 6.6-7" fill="none" stroke="${c}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+function build(){
+  const content = $("content"), typing = $("typing");
+  D.forEach(m => {
+    const row = document.createElement("div");
+    const out = m.from === ME;
+    row.className = "row " + (out ? "out" : "in");
+    let h = "";
+    if (!out) { const p = PEOPLE[m.from]; h += `<div class="av" style="background:${p.bg}">${m.from[0]}</div>`; }
+    const meta = `<span class="meta">${m.time}${out ? `<span class="tkw">${TICKS("#8696A0")}</span>` : ""}</span>`;
+    const name = out ? "" : `<div class="name" style="color:${PEOPLE[m.from].c}">${m.from}</div>`;
+    if (m.img) h += `<div class="bub ph"><img src="${IMG}" width="250" height="332" alt="Sposa in atelier"><div class="cap">${fmt(m.text)}<span class="sp"></span></div>${meta}</div>`;
+    else h += `<div class="bub">${name}${fmt(m.text)}<span class="sp"></span>${meta}</div>`;
+    row.innerHTML = h;
+    content.insertBefore(row, typing);
+    m.el = row; m.tkw = row.querySelector(".tkw"); m.blue = false;
+  });
+}
+
+let EVENTS = [], KF = [], TOTAL = 0, DAY_BOTTOM = 0, TYPING_H = 44;
+function plan(){
+  EVENTS = []; let t = 0.9;
+  D.forEach(m => {
+    if (m.from === ME) {
+      if (!m.img) {
+        t += m.gap ?? 0.6;
+        m.chars = graphemes(plain(m.text));
+        m.typeStart = t;
+        m.chars.forEach((c, k) => { if (c !== " ") EVENTS.push({t: t + k * KEY_DT, s: "key"}); });
+        t += m.chars.length * KEY_DT + 0.4;
+      }
+      m.appear = t; EVENTS.push({t, s: "sent"});
+    } else {
+      t += m.gap ?? 0.55;
+      m.typeStart = t;
+      t += m.typ ?? clamp(0.8 + plain(m.text).length * 0.03, 1.0, 2.4);
+      m.appear = t; EVENTS.push({t, s: "recv"});
+    }
+  });
+  TOTAL = t + TAIL;
+  measure();
+}
+function measure(){
+  const day = $("day");
+  DAY_BOTTOM = day.offsetTop + day.offsetHeight;
+  KF = [];
+  D.forEach((m, i) => {
+    m.bottom = m.el.offsetTop + m.el.offsetHeight;
+    const prev = i ? D[i-1].bottom : DAY_BOTTOM;
+    m.prevBottom = prev;
+    if (m.from !== ME) KF.push({t: m.typeStart, y: prev + 8 + TYPING_H});
+    KF.push({t: m.appear, y: m.bottom});
+  });
+}
+function scrollY(t){
+  let y = DAY_BOTTOM, from = DAY_BOTTOM;
+  for (const k of KF) { if (k.t > t) break; y = from + (k.y - from) * easeOut(clamp((t - k.t) / SCROLL)); from = k.y; }
+  return y;
+}
+
+function renderAt(t){
+  let clock = "16:42", typer = null, typingMsg = null, outMsg = null;
+  D.forEach(m => {
+    const p = clamp((t - m.appear) / POP);
+    const r = m.el;
+    if (p <= 0) { r.style.visibility = "hidden"; }
+    else {
+      clock = m.time;
+      r.style.visibility = "visible";
+      const out = m.from === ME;
+      r.style.opacity = clamp(p * 2.2);
+      r.style.transformOrigin = out ? "100% 100%" : "0% 100%";
+      r.style.transform = p >= 1 ? "none" : `translateY(${(1 - easeOut(p)) * 10}px) scale(${0.82 + 0.18 * easeBack(p)})`;
+    }
+    if (m.tkw) { const blue = t > m.appear + 1.5; if (blue !== m.blue) { m.blue = blue; m.tkw.innerHTML = TICKS(blue ? "#53BDEB" : "#8696A0"); } }
+    if (m.from !== ME && t >= m.typeStart && t < m.appear) { typer = m.from; typingMsg = m; }
+    if (m.from === ME && !m.img && t >= m.typeStart && t < m.appear) outMsg = m;
+  });
+  $("clock").textContent = clock;
+
+  const st = $("status");
+  if (typer) { st.textContent = typer + " sta scrivendo…"; st.className = "st writing"; }
+  else { st.textContent = "Chiara, Federica, Martina, Sara, Tu"; st.className = "st"; }
+
+  const ty = $("typing");
+  if (typingMsg) {
+    const tp = clamp((t - typingMsg.typeStart) / 0.18);
+    ty.style.top = (typingMsg.prevBottom + 8) + "px";
+    ty.style.opacity = tp;
+    ty.style.transform = `scale(${0.9 + 0.1 * easeOut(tp)})`;
+    ty.style.transformOrigin = "0% 100%";
+    const av = $("tav"); const p = PEOPLE[typer];
+    av.style.background = p.bg; av.textContent = typer[0];
+    ty.querySelectorAll("i").forEach((d, k) => {
+      const ph = ((t - typingMsg.typeStart) * 2.6 - k * 0.18) % 1;
+      const b = ph > 0 && ph < 0.5 ? Math.sin(ph / 0.5 * Math.PI) : 0;
+      d.style.transform = `translateY(${-b * 4}px)`;
+      d.style.opacity = 0.5 + b * 0.5;
+    });
+  } else ty.style.opacity = 0;
+
+  const val = $("val"), ph = $("ph"), tx = $("tx");
+  if (outMsg) {
+    const n = Math.min(outMsg.chars.length, Math.floor((t - outMsg.typeStart) / KEY_DT) + 1);
+    const caretOn = ((t - outMsg.typeStart) % 0.9) < 0.5 || n < outMsg.chars.length;
+    val.innerHTML = esc(outMsg.chars.slice(0, n).join("")) + (caretOn ? '<span class="car"></span>' : '<span class="car" style="opacity:0"></span>');
+    ph.style.visibility = "hidden";
+    const over = val.offsetWidth - tx.clientWidth;
+    val.style.transform = over > 0 ? `translateX(${-over}px)` : "none";
+    $("micI").style.display = "none"; $("sendI").style.display = "block"; $("cam").style.display = "none";
+    const press = clamp((t - (outMsg.appear - 0.16)) / 0.16);
+    $("mic").style.transform = press > 0 ? `scale(${1 - 0.12 * Math.sin(press * Math.PI)})` : "none";
+  } else {
+    val.innerHTML = ""; val.style.transform = "none"; ph.style.visibility = "visible";
+    $("micI").style.display = "block"; $("sendI").style.display = "none"; $("cam").style.display = "block";
+    $("mic").style.transform = "none";
+  }
+
+  const chatH = $("chat").clientHeight;
+  $("content").style.transform = `translateY(${Math.min(0, chatH - 10 - scrollY(t))}px)`;
+}
+
+/* ---------- suoni (sintetizzati, identici dal vivo e nel video) ---------- */
+const noiseCache = new WeakMap();
+function noise(ctx){
+  if (!noiseCache.has(ctx)) {
+    const b = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.25), ctx.sampleRate);
+    const d = b.getChannelData(0); let s = 12345;
+    for (let i = 0; i < d.length; i++) { s = (s * 16807) % 2147483647; d[i] = s / 1073741823.5 - 1; }
+    noiseCache.set(ctx, b);
+  }
+  return noiseCache.get(ctx);
+}
+function tone(ctx, out, t, f0, f1, dur, vol, type = "sine"){
+  const o = ctx.createOscillator(), g = ctx.createGain();
+  o.type = type;
+  o.frequency.setValueAtTime(f0, t);
+  o.frequency.exponentialRampToValueAtTime(f1, t + Math.min(0.05, dur * 0.5));
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(vol, t + 0.006);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(g).connect(out); o.start(t); o.stop(t + dur + 0.02);
+}
+const SOUNDS = {
+  recv(ctx, out, t){            // "pop-pop" di un messaggio in arrivo
+    tone(ctx, out, t,        1050, 1180, 0.08, 0.30);
+    tone(ctx, out, t + 0.085, 1500, 1760, 0.14, 0.26);
+  },
+  sent(ctx, out, t){            // "swoosh" di invio
+    tone(ctx, out, t, 420, 1000, 0.16, 0.26);
+    const n = ctx.createBufferSource(), f = ctx.createBiquadFilter(), g = ctx.createGain();
+    n.buffer = noise(ctx); f.type = "bandpass"; f.Q.value = 0.8;
+    f.frequency.setValueAtTime(1200, t); f.frequency.exponentialRampToValueAtTime(5000, t + 0.12);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.10, t + 0.03); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.15);
+    n.connect(f).connect(g).connect(out); n.start(t); n.stop(t + 0.17);
+  },
+  key(ctx, out, t){             // tasto della tastiera
+    const n = ctx.createBufferSource(), f = ctx.createBiquadFilter(), g = ctx.createGain();
+    n.buffer = noise(ctx); f.type = "bandpass"; f.frequency.value = 2600 + Math.random() * 600; f.Q.value = 1.2;
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.09, t + 0.002); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.025);
+    n.connect(f).connect(g).connect(out); n.start(t, Math.random() * 0.2); n.stop(t + 0.03);
+  }
+};
+function schedule(ctx, out, t0){ EVENTS.forEach(e => SOUNDS[e.s](ctx, out, t0 + e.t)); }
+
+// usato per esportare il video: restituisce l'audio come WAV base64
+async function renderAudioWav(){
+  const sr = 48000, ctx = new OfflineAudioContext(2, Math.ceil(sr * TOTAL), sr);
+  const master = ctx.createGain(); master.gain.value = 0.9; master.connect(ctx.destination);
+  schedule(ctx, master, 0);
+  const buf = await ctx.startRendering();
+  const L = buf.getChannelData(0), R = buf.getChannelData(1), n = buf.length;
+  const ab = new ArrayBuffer(44 + n * 4), v = new DataView(ab);
+  const w = (o, s) => [...s].forEach((c, i) => v.setUint8(o + i, c.charCodeAt(0)));
+  w(0, "RIFF"); v.setUint32(4, 36 + n * 4, true); w(8, "WAVEfmt "); v.setUint32(16, 16, true);
+  v.setUint16(20, 1, true); v.setUint16(22, 2, true); v.setUint32(24, sr, true); v.setUint32(28, sr * 4, true);
+  v.setUint16(32, 4, true); v.setUint16(34, 16, true); w(36, "data"); v.setUint32(40, n * 4, true);
+  for (let i = 0; i < n; i++) { v.setInt16(44 + i * 4, clamp(L[i], -1, 1) * 32767, true); v.setInt16(46 + i * 4, clamp(R[i], -1, 1) * 32767, true); }
+  let bin = ""; const u = new Uint8Array(ab);
+  for (let i = 0; i < u.length; i += 0x8000) bin += String.fromCharCode.apply(null, u.subarray(i, i + 0x8000));
+  return btoa(bin);
+}
+
+/* ---------- riproduzione ---------- */
+const REC = new URLSearchParams(location.search).has("record");
+let actx = null, run = null, raf = 0;
+function fit(){
+  if (REC) return;
+  const s = Math.min(innerWidth / 405, innerHeight / 720) * (innerWidth < 500 ? 1 : 0.94);
+  $("stage").style.transform = `scale(${s})`;
+}
+function play(){
+  $("start").style.display = "none"; $("again").style.display = "none";
+  try { actx = actx || new (window.AudioContext || window.webkitAudioContext)(); actx.resume(); } catch (e) { actx = null; }
+  if (run && run.master) run.master.disconnect();
+  if (actx) {
+    const master = actx.createGain(); master.gain.value = 0.9; master.connect(actx.destination);
+    const t0 = actx.currentTime + 0.15; schedule(actx, master, t0);
+    run = {master, now: () => actx.currentTime - t0};
+  } else { const p0 = performance.now(); run = {now: () => (performance.now() - p0) / 1000}; }
+  cancelAnimationFrame(raf);
+  const loop = () => {
+    const t = run.now(); renderAt(Math.max(0, t));
+    if (t < TOTAL) raf = requestAnimationFrame(loop); else $("again").style.display = "block";
+  };
+  loop();
+}
+
+(async function init(){
+  if (REC) document.body.classList.add("rec");
+  build();
+  try { await document.fonts.ready; } catch (e) {}
+  await Promise.all([...document.images].map(i => i.decode ? i.decode().catch(() => {}) : 0));
+  plan(); renderAt(0); fit();
+  addEventListener("resize", () => { fit(); measure(); });
+  $("start").addEventListener("click", play);
+  $("again").addEventListener("click", play);
+  window.CHAT = {renderAt, renderAudioWav, get total(){ return TOTAL; }, ready: true};
+})();
+</script>
+</body>
+</html>
