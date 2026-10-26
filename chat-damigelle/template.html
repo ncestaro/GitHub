@@ -35,7 +35,8 @@ body.rec #stage{border-radius:0;box-shadow:none}
 /* header */
 .hd{position:absolute;left:0;right:0;top:30px;height:58px;background:#fff;display:flex;align-items:center;padding:0 6px 0 4px;z-index:5;border-bottom:1px solid rgba(0,0,0,.06)}
 .hd .back{width:34px;height:40px;display:flex;align-items:center;justify-content:center}
-.gav{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#ffe3ea,#f7c6d3);display:flex;align-items:center;justify-content:center;font-size:22px;margin-right:10px;flex:none}
+.gav{width:40px;height:40px;border-radius:50%;overflow:hidden;margin-right:10px;flex:none;background:#dfe5e7}
+.gav img,.av img{width:100%;height:100%;object-fit:cover;display:block}
 .hd .ti{flex:1;min-width:0}
 .hd .nm{font-size:17px;font-weight:500;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .hd .st{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
@@ -53,7 +54,7 @@ body.rec #stage{border-radius:0;box-shadow:none}
 .row{display:flex;align-items:flex-end;margin-top:8px;visibility:hidden}
 .row.in{justify-content:flex-start}
 .row.out{justify-content:flex-end}
-.av{width:28px;height:28px;border-radius:50%;flex:none;margin-right:6px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:500}
+.av{width:28px;height:28px;border-radius:50%;flex:none;margin-right:6px;overflow:hidden;background:#dfe5e7}
 .bub{position:relative;max-width:76%;padding:6px 8px 7px 9px;border-radius:9px;box-shadow:0 1px .5px rgba(11,20,26,.13);font-size:15.5px;line-height:1.32;color:var(--ink);word-wrap:break-word}
 .in .bub{background:#fff;border-top-left-radius:0;margin-left:8px}
 .out .bub{background:var(--out);border-top-right-radius:0;margin-right:8px}
@@ -107,7 +108,7 @@ body.rec .ov, body.rec .again{display:none!important}
   </div>
   <div class="hd">
     <div class="back"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" fill="#111B21"/></svg></div>
-    <div class="gav">👰‍♀️</div>
+    <div class="gav"><img src="__AV_GROUP__" alt=""></div>
     <div class="ti">
       <div class="nm">Damigelle 💍✨</div>
       <div class="st" id="status">Chiara, Federica, Martina, Sara, Tu</div>
@@ -120,7 +121,7 @@ body.rec .ov, body.rec .again{display:none!important}
   </div>
   <div class="chat" id="chat"><div class="content" id="content">
     <div class="day" id="day"><span>Oggi</span></div>
-    <div class="typing" id="typing"><div class="av" id="tav"></div><div class="bub"><i></i><i></i><i></i></div></div>
+    <div class="typing" id="typing"><div class="av"><img id="tav" alt=""></div><div class="bub"><i></i><i></i><i></i></div></div>
   </div></div>
   <div class="ib">
     <div class="pill">
@@ -148,10 +149,9 @@ body.rec .ov, body.rec .again{display:none!important}
 const IMG = "__IMG__";
 const ME = "me";
 const PEOPLE = {
-  Martina:  {c:"#D3396D", bg:"#E9A1BD"},
-  Chiara:   {c:"#7F66FF", bg:"#B3A6FF"},
-  Federica: {c:"#C4610F", bg:"#F0B27A"},
-  Sara:     {c:"#1A8F4A", bg:"#8FD3A6"}
+  Martina:  {c:"#D3396D", img:"__AV_Martina__"},
+  Chiara:   {c:"#7F66FF", img:"__AV_Chiara__"},
+  Federica: {c:"#C4610F", img:"__AV_Federica__"}
 };
 // *testo* = grassetto, come su WhatsApp
 const D = [
@@ -160,18 +160,18 @@ const D = [
   {from:"Chiara",   time:"16:43", text:"Ma stai benissimooo 😍\nTi sta da DIO, sembra cucito addosso ✨"},
   {from:"Federica", time:"16:44", text:"Mi sto commuovendo in ufficio 🥹❤️\nÈ lui, me lo sento!!"},
   {from:"Martina",  time:"16:44", text:"Ok ma… quanto costa? 👀💸"},
-  {from:"Chiara",   time:"16:45", text:"Eh sì, dicci la cifra 😅", gap:.35, typ:1.0},
-  {from:"Sara",     time:"16:46", text:"Ragazze tenetevi forte…\nSolo *990 euro* 😱", typ:2.2},
-  {from:"Federica", time:"16:46", text:"COSAAA?! 990?? 😳", gap:.3, typ:.8},
-  {from:"Martina",  time:"16:46", text:"PRENDILO. SUBITO. 🏃‍♀️💨", gap:.2, typ:.8},
-  {from:"Chiara",   time:"16:47", text:"Non uscire da lì senza quel vestito 🙅‍♀️😂", gap:.25, typ:1.1},
-  {from:"Federica", time:"16:47", text:"Prendiloooo ❤️❤️❤️", gap:.2, typ:.7},
-  {from:ME,         time:"16:47", text:"Gliel'ho detto anch'io!! 🙌", gap:.5},
+  {from:"Chiara",   time:"16:45", text:"Eh sì, dicci la cifra 😅", typ:.6},
+  {from:ME,         time:"16:46", text:"Ragazze tenetevi forte…\nSolo *990 euro* 😱"},
+  {from:"Federica", time:"16:46", text:"COSAAA?! 990?? 😳", gap:.15, typ:.5},
+  {from:"Martina",  time:"16:46", text:"PRENDILO. SUBITO. 🏃‍♀️💨", gap:.1, typ:.5},
+  {from:"Chiara",   time:"16:47", text:"Non uscire da lì senza quel vestito 🙅‍♀️😂", gap:.1, typ:.7},
+  {from:"Federica", time:"16:47", text:"Prendiloooo ❤️❤️❤️", gap:.1, typ:.4},
+  {from:ME,         time:"16:47", text:"Gliel'ho detto anch'io!! 🙌"},
   {from:"Chiara",   time:"16:48", text:"Ma dove siete?? Voglio andarci anch'io 😍"},
-  {from:ME,         time:"16:48", text:"Da *Luisi Spose*, a *Sala Consilina* 📍✨", gap:.6}
+  {from:ME,         time:"16:48", text:"Da *Luisi Spose*, a *Sala Consilina* 📍✨"}
 ];
 
-const KEY_DT = 0.06, POP = 0.28, SCROLL = 0.32, TAIL = 3.5;
+const KEY_DT = 0.04, POP = 0.26, SCROLL = 0.28, TAIL = 3;
 const seg = new Intl.Segmenter("it", {granularity:"grapheme"});
 const graphemes = s => Array.from(seg.segment(s), x => x.segment);
 const plain = s => s.replace(/\*/g, "");
@@ -191,7 +191,7 @@ function build(){
     const out = m.from === ME;
     row.className = "row " + (out ? "out" : "in");
     let h = "";
-    if (!out) { const p = PEOPLE[m.from]; h += `<div class="av" style="background:${p.bg}">${m.from[0]}</div>`; }
+    if (!out) { const p = PEOPLE[m.from]; h += `<div class="av"><img src="${p.img}" alt=""></div>`; }
     const meta = `<span class="meta">${m.time}${out ? `<span class="tkw">${TICKS("#8696A0")}</span>` : ""}</span>`;
     const name = out ? "" : `<div class="name" style="color:${PEOPLE[m.from].c}">${m.from}</div>`;
     if (m.img) h += `<div class="bub ph"><img src="${IMG}" width="250" height="332" alt="Sposa in atelier"><div class="cap">${fmt(m.text)}<span class="sp"></span></div>${meta}</div>`;
@@ -204,21 +204,21 @@ function build(){
 
 let EVENTS = [], KF = [], TOTAL = 0, DAY_BOTTOM = 0, TYPING_H = 44;
 function plan(){
-  EVENTS = []; let t = 0.9;
+  EVENTS = []; let t = 0.6;
   D.forEach(m => {
     if (m.from === ME) {
       if (!m.img) {
-        t += m.gap ?? 0.6;
+        t += m.gap ?? 0.3;
         m.chars = graphemes(plain(m.text));
         m.typeStart = t;
         m.chars.forEach((c, k) => { if (c !== " ") EVENTS.push({t: t + k * KEY_DT, s: "key"}); });
-        t += m.chars.length * KEY_DT + 0.4;
+        t += m.chars.length * KEY_DT + 0.25;
       }
       m.appear = t; EVENTS.push({t, s: "sent"});
     } else {
-      t += m.gap ?? 0.55;
+      t += m.gap ?? 0.25;
       m.typeStart = t;
-      t += m.typ ?? clamp(0.8 + plain(m.text).length * 0.03, 1.0, 2.4);
+      t += m.typ ?? clamp(0.4 + plain(m.text).length * 0.02, 0.6, 1.3);
       m.appear = t; EVENTS.push({t, s: "recv"});
     }
   });
@@ -275,7 +275,7 @@ function renderAt(t){
     ty.style.transform = `scale(${0.9 + 0.1 * easeOut(tp)})`;
     ty.style.transformOrigin = "0% 100%";
     const av = $("tav"); const p = PEOPLE[typer];
-    av.style.background = p.bg; av.textContent = typer[0];
+    if (av.getAttribute("src") !== p.img) av.setAttribute("src", p.img);
     ty.querySelectorAll("i").forEach((d, k) => {
       const ph = ((t - typingMsg.typeStart) * 2.6 - k * 0.18) % 1;
       const b = ph > 0 && ph < 0.5 ? Math.sin(ph / 0.5 * Math.PI) : 0;
@@ -288,7 +288,7 @@ function renderAt(t){
   if (outMsg) {
     const n = Math.min(outMsg.chars.length, Math.floor((t - outMsg.typeStart) / KEY_DT) + 1);
     const caretOn = ((t - outMsg.typeStart) % 0.9) < 0.5 || n < outMsg.chars.length;
-    val.innerHTML = esc(outMsg.chars.slice(0, n).join("")) + (caretOn ? '<span class="car"></span>' : '<span class="car" style="opacity:0"></span>');
+    val.innerHTML = esc(outMsg.chars.slice(0, n).join("").replace(/\n/g, " ")) + (caretOn ? '<span class="car"></span>' : '<span class="car" style="opacity:0"></span>');
     ph.style.visibility = "hidden";
     const over = val.offsetWidth - tx.clientWidth;
     val.style.transform = over > 0 ? `translateX(${-over}px)` : "none";
